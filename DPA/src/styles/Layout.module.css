@@ -1,0 +1,12 @@
+/* styles/Layout.module.css */
+.dashboardContainer {
+    display: flex;
+    height: 100vh;
+    background-color: #f9f9f9;
+}
+
+.mainContent {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
+}

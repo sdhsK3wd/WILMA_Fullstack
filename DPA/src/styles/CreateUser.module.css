@@ -1,0 +1,46 @@
+.dashboardContainer {
+    display: flex;
+    height: 100vh;
+    background-color: #f8f9fa;
+    overflow: hidden; /* Scrollen verhindern */
+}
+
+.mainContent {
+    flex-grow: 1;
+    padding: 40px;
+    background-color: white;
+    margin-left: 285px; /* Platz für die Sidebar */
+    height: 100vh;
+    overflow-y: auto; /* Scrollen nur im Hauptinhalt */
+    padding-left: 20px; /* Weniger Abstand zur Navbar */
+}
+
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.successMessage {
+    color: green;
+    margin-top: 10px;
+}

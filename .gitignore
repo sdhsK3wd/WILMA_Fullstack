@@ -1,0 +1,20 @@
+# Frontend (Node, React, etc.)
+DPA/node_modules/
+DPA/.env
+DPA/.idea/
+DPA/dist/
+DPA/build/
+
+# Backend (Rider / .NET)
+WILMA_Backend/bin/
+WILMA_Backend/obj/
+WILMA_Backend/.vs/
+WILMA_Backend/.idea/
+
+# General
+*.log
+*.DS_Store
+*.user
+*.suo
+*.tmp
+.env

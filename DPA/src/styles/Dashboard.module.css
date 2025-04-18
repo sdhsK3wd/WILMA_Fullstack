@@ -1,0 +1,42 @@
+.dashboardContainer {
+    display: flex;
+    height: 100vh;
+    background-color: #f8f9fa;
+    overflow: hidden; /* Scrollen verhindern */
+}
+.userInfo {
+    margin-bottom: 20px;
+}
+
+.onlineUserCount {
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #007bff;
+}
+.mainContent {
+    flex-grow: 1;
+    padding: 40px;
+    background-color: white;
+    margin-left: 300px; /* Platz für die Sidebar */
+    height: 100vh;
+    overflow-y: auto; /* Scrollen nur im Hauptinhalt */
+    padding-left: 20px; /* Weniger Abstand zur Navbar */
+}
+
+.userInfo {
+    margin-bottom: 20px;
+}
+
+.statsContainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.statCard {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}

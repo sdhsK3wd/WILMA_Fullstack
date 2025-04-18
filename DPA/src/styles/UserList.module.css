@@ -1,0 +1,102 @@
+/* UserList.module.css */
+
+.dashboardContainer {
+    display: flex;
+    height: 100vh;
+    background-color: #f8f9fa;
+    overflow: hidden;
+}
+
+.mainContent {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: white;
+    margin-left: 285px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.userTable {
+    width: 100%;
+    max-width: 900px;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.userTable th,
+.userTable td {
+    vertical-align: middle;
+    text-align: center;
+    height: 60px; /* Zellenhöhe festlegen */
+}
+
+
+.userTable th {
+    background-color: #007bff;
+    color: white;
+}
+
+.userTable tr:nth-child(even) {
+    background-color: #f4f4f4;
+}
+
+.userTable tr:hover {
+    background-color: #f1f7fd;
+}
+
+.userImage {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #007bff;
+}
+
+.deleteButton {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.deleteButton:hover {
+    background-color: #c82333;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 24px;
+}
+
+/* Responsive Anpassung */
+@media (max-width: 768px) {
+    .mainContent {
+        padding: 15px;
+        margin-left: 0;
+    }
+
+    .userTable th,
+    .userTable td {
+        padding: 8px;
+    }
+}
+
+.userImage {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover; /* Bild proportional zuschneiden, ohne Verzerrung */
+    border: 1px solid #000000;
+    background-color: #ddd;
+    display: inline-block;
+}
+
