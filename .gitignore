@@ -1,20 +1,21 @@
-# Frontend (Node, React, etc.)
+# === FRONTEND (Node.js / React / Vite / etc.) ===
 DPA/node_modules/
 DPA/.env
 DPA/.idea/
 DPA/dist/
 DPA/build/
 
-# Backend (Rider / .NET)
+# === BACKEND (.NET Core / Rider / Visual Studio) ===
 WILMA_Backend/bin/
 WILMA_Backend/obj/
 WILMA_Backend/.vs/
 WILMA_Backend/.idea/
+WILMA_Backend/*.db
 
-# General
+# === General ===
 *.log
-*.DS_Store
 *.user
 *.suo
 *.tmp
+*.DS_Store
 .env
