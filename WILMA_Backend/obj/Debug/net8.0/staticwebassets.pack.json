@@ -1,0 +1,37 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\profile-images\\314e12a7-2d56-4a31-a259-eeec37be4b82_Screenshot 2024-08-09 010803.png",
+      "PackagePath": "staticwebassets\\profile-images\\314e12a7-2d56-4a31-a259-eeec37be4b82_Screenshot 2024-08-09 010803.png"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\profile-images\\3ac7b678-d3ef-4b2b-8559-b8bee283f26e_Screenshot 2024-08-09 010617.png",
+      "PackagePath": "staticwebassets\\profile-images\\3ac7b678-d3ef-4b2b-8559-b8bee283f26e_Screenshot 2024-08-09 010617.png"
+    },
+    {
+      "Id": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\profile-images\\a7327ada-b987-4b77-82c3-2fd24b5d631a_output (4).png",
+      "PackagePath": "staticwebassets\\profile-images\\a7327ada-b987-4b77-82c3-2fd24b5d631a_output (4).png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WILMA_Backend.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WILMA_Backend.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.WILMA_Backend.props",
+      "PackagePath": "build\\WILMA_Backend.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.WILMA_Backend.props",
+      "PackagePath": "buildMultiTargeting\\WILMA_Backend.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.WILMA_Backend.props",
+      "PackagePath": "buildTransitive\\WILMA_Backend.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

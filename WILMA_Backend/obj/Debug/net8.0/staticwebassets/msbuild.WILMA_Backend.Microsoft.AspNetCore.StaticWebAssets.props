@@ -1,0 +1,58 @@
+﻿<Project>
+  <ItemGroup>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\profile-images\314e12a7-2d56-4a31-a259-eeec37be4b82_Screenshot 2024-08-09 010803.png'))">
+      <SourceType>Package</SourceType>
+      <SourceId>WILMA_Backend</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/WILMA_Backend</BasePath>
+      <RelativePath>profile-images/314e12a7-2d56-4a31-a259-eeec37be4b82_Screenshot 2024-08-09 010803.png</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>j9hp9mwzdc</Fingerprint>
+      <Integrity>p6TUkVNfV7xgCJyR9d+23g1X5GAlBpigKiQfm88QvVU=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\profile-images\314e12a7-2d56-4a31-a259-eeec37be4b82_Screenshot 2024-08-09 010803.png'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\profile-images\3ac7b678-d3ef-4b2b-8559-b8bee283f26e_Screenshot 2024-08-09 010617.png'))">
+      <SourceType>Package</SourceType>
+      <SourceId>WILMA_Backend</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/WILMA_Backend</BasePath>
+      <RelativePath>profile-images/3ac7b678-d3ef-4b2b-8559-b8bee283f26e_Screenshot 2024-08-09 010617.png</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>0dm2ld6wh0</Fingerprint>
+      <Integrity>TDnm1tQdE13EJcC7cEJ18qrhQb7TZd9x7A7rTIEtgBg=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\profile-images\3ac7b678-d3ef-4b2b-8559-b8bee283f26e_Screenshot 2024-08-09 010617.png'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\profile-images\a7327ada-b987-4b77-82c3-2fd24b5d631a_output (4).png'))">
+      <SourceType>Package</SourceType>
+      <SourceId>WILMA_Backend</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/WILMA_Backend</BasePath>
+      <RelativePath>profile-images/a7327ada-b987-4b77-82c3-2fd24b5d631a_output (4).png</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>plh5pgv2mh</Fingerprint>
+      <Integrity>XVFoaTjGgiBmJ5Abjhu4oDBkfFlbDDPcuqI9i4G6umk=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\profile-images\a7327ada-b987-4b77-82c3-2fd24b5d631a_output (4).png'))</OriginalItemSpec>
+    </StaticWebAsset>
+  </ItemGroup>
+</Project>

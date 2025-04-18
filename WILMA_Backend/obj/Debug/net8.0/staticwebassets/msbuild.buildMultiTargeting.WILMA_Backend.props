@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\WILMA_Backend.props" />
+</Project>

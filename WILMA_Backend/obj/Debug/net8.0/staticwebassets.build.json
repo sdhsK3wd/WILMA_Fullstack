@@ -1,0 +1,331 @@
+{
+  "Version": 1,
+  "Hash": "XG5hsAqKZHekvaCtFSZN1QW2XW5mZEpRX3rcZxDp6BA=",
+  "Source": "WILMA_Backend",
+  "BasePath": "_content/WILMA_Backend",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "WILMA_Backend\\wwwroot",
+      "Source": "WILMA_Backend",
+      "ContentRoot": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\",
+      "BasePath": "_content/WILMA_Backend",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\profile-images\\314e12a7-2d56-4a31-a259-eeec37be4b82_Screenshot 2024-08-09 010803.png",
+      "SourceId": "WILMA_Backend",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\",
+      "BasePath": "_content/WILMA_Backend",
+      "RelativePath": "profile-images/314e12a7-2d56-4a31-a259-eeec37be4b82_Screenshot 2024-08-09 010803#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "j9hp9mwzdc",
+      "Integrity": "p6TUkVNfV7xgCJyR9d+23g1X5GAlBpigKiQfm88QvVU=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\profile-images\\314e12a7-2d56-4a31-a259-eeec37be4b82_Screenshot 2024-08-09 010803.png"
+    },
+    {
+      "Identity": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\profile-images\\3ac7b678-d3ef-4b2b-8559-b8bee283f26e_Screenshot 2024-08-09 010617.png",
+      "SourceId": "WILMA_Backend",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\",
+      "BasePath": "_content/WILMA_Backend",
+      "RelativePath": "profile-images/3ac7b678-d3ef-4b2b-8559-b8bee283f26e_Screenshot 2024-08-09 010617#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "0dm2ld6wh0",
+      "Integrity": "TDnm1tQdE13EJcC7cEJ18qrhQb7TZd9x7A7rTIEtgBg=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\profile-images\\3ac7b678-d3ef-4b2b-8559-b8bee283f26e_Screenshot 2024-08-09 010617.png"
+    },
+    {
+      "Identity": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\profile-images\\a7327ada-b987-4b77-82c3-2fd24b5d631a_output (4).png",
+      "SourceId": "WILMA_Backend",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\",
+      "BasePath": "_content/WILMA_Backend",
+      "RelativePath": "profile-images/a7327ada-b987-4b77-82c3-2fd24b5d631a_output (4)#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "plh5pgv2mh",
+      "Integrity": "XVFoaTjGgiBmJ5Abjhu4oDBkfFlbDDPcuqI9i4G6umk=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\profile-images\\a7327ada-b987-4b77-82c3-2fd24b5d631a_output (4).png"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "profile-images/314e12a7-2d56-4a31-a259-eeec37be4b82_Screenshot 2024-08-09 010803.j9hp9mwzdc.png",
+      "AssetFile": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\profile-images\\314e12a7-2d56-4a31-a259-eeec37be4b82_Screenshot 2024-08-09 010803.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "368702"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"p6TUkVNfV7xgCJyR9d+23g1X5GAlBpigKiQfm88QvVU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 13 Mar 2025 17:58:53 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "j9hp9mwzdc"
+        },
+        {
+          "Name": "label",
+          "Value": "profile-images/314e12a7-2d56-4a31-a259-eeec37be4b82_Screenshot 2024-08-09 010803.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-p6TUkVNfV7xgCJyR9d+23g1X5GAlBpigKiQfm88QvVU="
+        }
+      ]
+    },
+    {
+      "Route": "profile-images/314e12a7-2d56-4a31-a259-eeec37be4b82_Screenshot 2024-08-09 010803.png",
+      "AssetFile": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\profile-images\\314e12a7-2d56-4a31-a259-eeec37be4b82_Screenshot 2024-08-09 010803.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "368702"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"p6TUkVNfV7xgCJyR9d+23g1X5GAlBpigKiQfm88QvVU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 13 Mar 2025 17:58:53 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-p6TUkVNfV7xgCJyR9d+23g1X5GAlBpigKiQfm88QvVU="
+        }
+      ]
+    },
+    {
+      "Route": "profile-images/3ac7b678-d3ef-4b2b-8559-b8bee283f26e_Screenshot 2024-08-09 010617.0dm2ld6wh0.png",
+      "AssetFile": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\profile-images\\3ac7b678-d3ef-4b2b-8559-b8bee283f26e_Screenshot 2024-08-09 010617.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "358105"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"TDnm1tQdE13EJcC7cEJ18qrhQb7TZd9x7A7rTIEtgBg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 12 Mar 2025 19:53:30 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "0dm2ld6wh0"
+        },
+        {
+          "Name": "label",
+          "Value": "profile-images/3ac7b678-d3ef-4b2b-8559-b8bee283f26e_Screenshot 2024-08-09 010617.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-TDnm1tQdE13EJcC7cEJ18qrhQb7TZd9x7A7rTIEtgBg="
+        }
+      ]
+    },
+    {
+      "Route": "profile-images/3ac7b678-d3ef-4b2b-8559-b8bee283f26e_Screenshot 2024-08-09 010617.png",
+      "AssetFile": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\profile-images\\3ac7b678-d3ef-4b2b-8559-b8bee283f26e_Screenshot 2024-08-09 010617.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "358105"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"TDnm1tQdE13EJcC7cEJ18qrhQb7TZd9x7A7rTIEtgBg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 12 Mar 2025 19:53:30 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-TDnm1tQdE13EJcC7cEJ18qrhQb7TZd9x7A7rTIEtgBg="
+        }
+      ]
+    },
+    {
+      "Route": "profile-images/a7327ada-b987-4b77-82c3-2fd24b5d631a_output (4).plh5pgv2mh.png",
+      "AssetFile": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\profile-images\\a7327ada-b987-4b77-82c3-2fd24b5d631a_output (4).png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "105577"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XVFoaTjGgiBmJ5Abjhu4oDBkfFlbDDPcuqI9i4G6umk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 03 Apr 2025 23:08:46 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "plh5pgv2mh"
+        },
+        {
+          "Name": "label",
+          "Value": "profile-images/a7327ada-b987-4b77-82c3-2fd24b5d631a_output (4).png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-XVFoaTjGgiBmJ5Abjhu4oDBkfFlbDDPcuqI9i4G6umk="
+        }
+      ]
+    },
+    {
+      "Route": "profile-images/a7327ada-b987-4b77-82c3-2fd24b5d631a_output (4).png",
+      "AssetFile": "C:\\Users\\user\\Desktop\\WILMA_Backend\\wwwroot\\profile-images\\a7327ada-b987-4b77-82c3-2fd24b5d631a_output (4).png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "105577"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"XVFoaTjGgiBmJ5Abjhu4oDBkfFlbDDPcuqI9i4G6umk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 03 Apr 2025 23:08:46 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-XVFoaTjGgiBmJ5Abjhu4oDBkfFlbDDPcuqI9i4G6umk="
+        }
+      ]
+    }
+  ]
+}
