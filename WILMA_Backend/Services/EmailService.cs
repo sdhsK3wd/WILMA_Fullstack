@@ -16,7 +16,7 @@ namespace WILMABackend.Services
         public async Task SendResetEmail(string toEmail, string token)
         {
             var resetUrl = $"http://localhost:5178/forgot-password?token={token}";
-            var logoPath = @"C:\Users\user\Desktop\WILMA_Backend\imagees\Logo.png"; // Dein Logo-Pfad
+            var logoPath = @"C:\Users\user\Desktop\WILMA_Fullstack/WILMA_Backend\imagees\Logo.png"; // Dein Logo-Pfad
 
             using (var client = new SmtpClient(_smtpServer, _smtpPort))
             {

@@ -19,3 +19,8 @@ WILMA_Backend/*.db
 *.tmp
 *.DS_Store
 .env
+
+
+# Ignore DB temp files
+*.db-shm
+*.db-wal
