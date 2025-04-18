@@ -18,7 +18,6 @@ using WILMA_Backend.DTOs;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 
-
 namespace WILMABackend.Controllers
 {
     [ApiController]
@@ -30,8 +29,6 @@ namespace WILMABackend.Controllers
         private readonly EmailService _emailService;
         private readonly IConfiguration _config;
 
-      
-// ganz unten im Controller, z. B. unter GetAllUsers()
         private bool IsStrongPassword(string password)
         {
             return password.Length >= 8 &&
@@ -39,15 +36,15 @@ namespace WILMABackend.Controllers
                    password.Any(char.IsDigit) &&
                    password.Any(ch => !char.IsLetterOrDigit(ch));
         }
+
         public UserController(UserService userService, WilmaContext context, EmailService emailService, IConfiguration config)
         {
             _userService = userService;
             _context = context;
             _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
-            _config = config; // <-- neu
+            _config = config;
         }
 
-    
         private void SendResetEmail(string email, string resetToken)
         {
             try
@@ -66,8 +63,8 @@ namespace WILMABackend.Controllers
 
                 using (var client = new SmtpClient())
                 {
-                    client.Connect("smtp.your-email-provider.com", 587, false); // 🟢 Change this to your SMTP server
-                    client.Authenticate("your-email@provider.com", "your-password"); // 🟢 Change this to your credentials
+                    client.Connect("smtp.your-email-provider.com", 587, false);
+                    client.Authenticate("your-email@provider.com", "your-password");
                     client.Send(message);
                     client.Disconnect(true);
                 }
@@ -79,6 +76,7 @@ namespace WILMABackend.Controllers
                 Console.WriteLine($"❌ ERROR: Email sending failed: {ex.Message}");
             }
         }
+
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
@@ -110,36 +108,30 @@ namespace WILMABackend.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDTO userDto)
         {
-            // ✅ Admin prüfen
             var adminUser = await _userService.AuthenticateUser(userDto.AdminEmail, "dummy");
             if (adminUser == null || adminUser.Role != "Admin")
             {
                 return Unauthorized(new { message = "Nur Admins dürfen Benutzer anlegen!" });
             }
 
-            // ✅ Prüfen, ob E-Mail bereits existiert
             if (await _context.Users.AnyAsync(u => u.Email == userDto.Email))
             {
                 return BadRequest(new { message = "Diese E-Mail ist bereits registriert." });
             }
 
-            // ✅ Prüfen, ob Username bereits existiert
             if (await _context.Users.AnyAsync(u => u.Username == userDto.Username))
             {
                 return BadRequest(new { message = "Dieser Benutzername ist bereits vergeben." });
             }
 
-            // ✅ Rolle prüfen (case-insensitive)
             var validRoles = new[] { "admin", "user" };
             if (!validRoles.Contains(userDto.Role.ToLower()))
             {
                 return BadRequest(new { message = "Ungültige Rolle. Erlaubt sind nur 'Admin' oder 'User'." });
             }
 
-            // ✅ Rolle normalisieren (z. B. „admin“ → „Admin“)
             userDto.Role = char.ToUpper(userDto.Role[0]) + userDto.Role.Substring(1).ToLower();
 
-            // ✅ Passwort-Stärke prüfen
             if (!IsStrongPassword(userDto.Password))
             {
                 return BadRequest(new
@@ -148,7 +140,6 @@ namespace WILMABackend.Controllers
                 });
             }
 
-            // ✅ Benutzer registrieren
             bool success = await _userService.RegisterUser(
                 userDto.AdminEmail,
                 userDto.Username,
@@ -168,11 +159,6 @@ namespace WILMABackend.Controllers
             return Ok(new { message = "Benutzer erfolgreich registriert." });
         }
 
-
-
-
-
-        
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
@@ -185,6 +171,8 @@ namespace WILMABackend.Controllers
                 return Unauthorized(new { message = "Login fehlgeschlagen." });
 
             user.IsOnline = true;
+            user.RefreshToken = GenerateRefreshToken();
+            user.RefreshTokenExpires = DateTime.UtcNow.AddDays(7);
             await _context.SaveChangesAsync();
 
             var token = GenerateJwtToken(user);
@@ -198,13 +186,12 @@ namespace WILMABackend.Controllers
                 PhoneNumber = user.PhoneNumber ?? "Not set",
                 Location = user.Location ?? "Not set",
                 ProfileImageUrl = user.ProfileImageUrl ?? "",
-                token
+                token,
+                refreshToken = user.RefreshToken // ✅ Hinzufügen!
             });
+
+
         }
-
-
-
-
 
         [Authorize]
         [HttpPost("logout")]
@@ -220,11 +207,12 @@ namespace WILMABackend.Controllers
                 return Unauthorized();
 
             user.IsOnline = false;
+            user.RefreshToken = null;
+            user.RefreshTokenExpires = null;
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Erfolgreich ausgeloggt." });
         }
-
 
         [HttpGet("online-count")]
         public async Task<IActionResult> GetOnlineUserCount()
@@ -244,15 +232,13 @@ namespace WILMABackend.Controllers
 
             user.PhoneNumber = profileUpdateDTO.PhoneNumber;
             user.Location = profileUpdateDTO.Location;
-            user.ProfileImageUrl = profileUpdateDTO.ProfileImageUrl; // Jetzt möglich!
+            user.ProfileImageUrl = profileUpdateDTO.ProfileImageUrl;
 
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Profil erfolgreich aktualisiert." });
         }
 
-
-        // In deinem UserController hinzufügen:
         [HttpPost("upload-profile-image")]
         public async Task<IActionResult> UploadProfileImage(IFormFile file)
         {
@@ -277,9 +263,7 @@ namespace WILMABackend.Controllers
             return Ok(new { imageUrl });
         }
 
-
-
-          [HttpPost("forgot-password")]
+        [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
             Console.WriteLine($"🔍 Forgot Password request received for: {request.Email}");
@@ -291,7 +275,6 @@ namespace WILMABackend.Controllers
                 return NotFound(new { message = "E-Mail nicht gefunden" });
             }
 
-            // 生成 32 字节的唯一 Token，并防止重复
             string resetToken;
             do
             {
@@ -299,12 +282,11 @@ namespace WILMABackend.Controllers
             } while (await _context.Users.AnyAsync(u => u.PasswordResetToken == resetToken));
 
             user.PasswordResetToken = resetToken;
-            user.ResetTokenExpires = DateTime.UtcNow.AddMinutes(30); // 30 分钟过期
+            user.ResetTokenExpires = DateTime.UtcNow.AddMinutes(30);
             await _context.SaveChangesAsync();
 
             Console.WriteLine($"✅ Reset Token Generated: {resetToken}");
 
-            // 发送邮件
             try
             {
                 await _emailService.SendResetEmail(user.Email, resetToken);
@@ -318,8 +300,6 @@ namespace WILMABackend.Controllers
 
             return Ok(new { message = "Passwort-Zurücksetzen-Link wurde gesendet" });
         }
-
-
 
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
@@ -357,9 +337,6 @@ namespace WILMABackend.Controllers
             return Ok(new { message = "Passwort erfolgreich zurückgesetzt" });
         }
 
-
-
-
         [Authorize(Roles = "Admin")]
         [HttpGet("all")]
         public async Task<IActionResult> GetAllUsers()
@@ -378,6 +355,8 @@ namespace WILMABackend.Controllers
         }
 
 
+
+
         private string GenerateJwtToken(User user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -391,7 +370,10 @@ namespace WILMABackend.Controllers
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Role, user.Role)
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(15),
+                Expires = DateTime.UtcNow.AddSeconds(10), // in GenerateJwtToken
+
+
+
                 Issuer = _config["Jwt:Issuer"],
                 Audience = _config["Jwt:Audience"],
                 SigningCredentials = new SigningCredentials(
@@ -406,9 +388,47 @@ namespace WILMABackend.Controllers
 
 
 
+        private string GenerateRefreshToken()
+        {
+            return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        }
 
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshRequest request)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.RefreshToken == request.Token);
+
+            if (user == null || user.RefreshTokenExpires < DateTime.UtcNow)
+                return Unauthorized(new { message = "Ungültiger oder abgelaufener Refresh Token" });
+
+            // ✅ Neue Tokens generieren
+            var newAccessToken = GenerateJwtToken(user);
+            var newRefreshToken = GenerateRefreshToken();
+
+            // ✅ Neue Tokens im User-Objekt setzen
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpires = DateTime.UtcNow.AddDays(7);
+
+            // ✅ Fix: Entity manuell als geändert markieren
+            _context.Users.Update(user);
+
+            await _context.SaveChangesAsync();
+
+            // ✅ Neue Tokens zurückgeben
+            return Ok(new
+            {
+                token = newAccessToken,
+                refreshToken = newRefreshToken
+            });
+        }
+
+
+
+
+
+        public class RefreshRequest
+        {
+            public string Token { get; set; }
+        }
     }
-    
 }
-
-

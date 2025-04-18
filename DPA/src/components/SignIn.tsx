@@ -43,8 +43,10 @@ const SignIn: React.FC = () => {
                 phoneNumber: response.data.phoneNumber,
                 location: response.data.location,
                 profileImageUrl: response.data.profileImageUrl,
-                token: response.data.token
+                token: response.data.token,
+                refreshToken: response.data.refreshToken // ✅ NEU!
             };
+
 
             login(updatedUser); // ✅ Context login aufrufen
             toast.success("Login erfolgreich!");

@@ -5,12 +5,59 @@ const instance = axios.create({
     baseURL: API_BASE_URL,
 });
 
-instance.interceptors.request.use(config => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    if (user?.token) {
-        config.headers.Authorization = `Bearer ${user.token}`;
+// ✅ Request Interceptor: Token anhängen
+instance.interceptors.request.use(
+    config => {
+        const user = JSON.parse(localStorage.getItem("user") || "{}");
+        if (user?.token) {
+            config.headers.Authorization = `Bearer ${user.token}`;
+        }
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
     }
-    return config;
-});
+);
+
+// ✅ Response Interceptor: Refresh bei 401
+instance.interceptors.response.use(
+    response => response,
+    async error => {
+        const originalRequest = error.config;
+
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+
+            try {
+                const user = JSON.parse(localStorage.getItem("user") || "{}");
+                if (!user?.refreshToken) throw new Error("Kein Refresh Token gefunden.");
+
+                // 🛠️ WICHTIG: /api/users/refresh-token!
+                const refreshResponse = await axios.post(`${API_BASE_URL}/api/users/refresh-token`, {
+                    token: user.refreshToken
+                });
+
+                const updatedUser = {
+                    ...user,
+                    token: refreshResponse.data.token,
+                    refreshToken: refreshResponse.data.refreshToken
+                };
+
+                localStorage.setItem("user", JSON.stringify(updatedUser));
+
+                // Retry mit neuem Token
+                originalRequest.headers.Authorization = `Bearer ${updatedUser.token}`;
+                return instance(originalRequest);
+
+            } catch (refreshError) {
+                console.error("❌ Refresh fehlgeschlagen", refreshError);
+                localStorage.removeItem("user");
+                window.location.href = "/login";
+            }
+        }
+
+        return Promise.reject(error);
+    }
+);
 
 export default instance;
