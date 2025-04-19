@@ -18,6 +18,8 @@ using WILMA_Backend.DTOs;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 
+
+
 namespace WILMABackend.Controllers
 {
     [ApiController]
@@ -231,14 +233,18 @@ namespace WILMABackend.Controllers
             if (user == null)
                 return NotFound(new { message = "Benutzer nicht gefunden." });
 
-            user.PhoneNumber = profileUpdateDTO.PhoneNumber;
-            user.Location = profileUpdateDTO.Location;
+            // 🚨 Sanitize user input to prevent XSS
+            user.PhoneNumber = profileUpdateDTO.PhoneNumber?.Replace("<", "").Replace(">", "");
+            user.Location = profileUpdateDTO.Location?.Replace("<", "").Replace(">", "");
             user.ProfileImageUrl = profileUpdateDTO.ProfileImageUrl;
 
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Profil erfolgreich aktualisiert." });
         }
+
+
+
 
         [HttpPost("upload-profile-image")]
         public async Task<IActionResult> UploadProfileImage(IFormFile file)

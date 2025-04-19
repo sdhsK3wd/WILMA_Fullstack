@@ -5,6 +5,7 @@ import API_BASE_URL from "../apiConfig";
 import styles from "../styles/Profile.module.css";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
+import DOMPurify from "dompurify"; // ✅ Import hinzugefügt
 
 const Profile: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -58,13 +59,17 @@ const Profile: React.FC = () => {
             return;
         }
 
+        // ✅ Felder sanitizen
+        const sanitizedPhoneNumber = DOMPurify.sanitize(phoneNumber);
+        const sanitizedLocation = DOMPurify.sanitize(location);
+
         setLoading(true);
         try {
             await axios.put(`${API_BASE_URL}/users/update-profile`, {
                 username,
                 email,
-                phoneNumber,
-                location,
+                phoneNumber: sanitizedPhoneNumber,
+                location: sanitizedLocation,
                 profileImageUrl: profileImage
             });
 
@@ -75,8 +80,8 @@ const Profile: React.FC = () => {
                 const user = JSON.parse(storedUser);
                 const updatedUser = {
                     ...user,
-                    phoneNumber,
-                    location,
+                    phoneNumber: sanitizedPhoneNumber,
+                    location: sanitizedLocation,
                     profileImageUrl: profileImage
                 };
                 localStorage.setItem("user", JSON.stringify(updatedUser));
@@ -131,7 +136,7 @@ const Profile: React.FC = () => {
                                     <input type="file" accept="image/*" onChange={handleImageChange} />
 
                                     <button type="submit" disabled={loading}>
-                                        {loading ? <ClipLoader size={18} color="#fff"/> : "Speichern"}
+                                        {loading ? <ClipLoader size={18} color="#fff" /> : "Speichern"}
                                     </button>
 
                                     <button type="button" className={styles.closeButton}
