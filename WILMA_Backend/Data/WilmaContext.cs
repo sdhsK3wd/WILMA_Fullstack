@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WILMABackend.DTOs;
 
 
 namespace WILMABackend.Data

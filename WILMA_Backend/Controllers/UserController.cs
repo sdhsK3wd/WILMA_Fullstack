@@ -213,7 +213,8 @@ namespace WILMABackend.Controllers
 
             return Ok(new { message = "Erfolgreich ausgeloggt." });
         }
-
+        
+        [Authorize]
         [HttpGet("online-count")]
         public async Task<IActionResult> GetOnlineUserCount()
         {
@@ -401,26 +402,25 @@ namespace WILMABackend.Controllers
             if (user == null || user.RefreshTokenExpires < DateTime.UtcNow)
                 return Unauthorized(new { message = "Ungültiger oder abgelaufener Refresh Token" });
 
-            // ✅ Neue Tokens generieren
+            // ✨ Neue Tokens
             var newAccessToken = GenerateJwtToken(user);
             var newRefreshToken = GenerateRefreshToken();
 
-            // ✅ Neue Tokens im User-Objekt setzen
             user.RefreshToken = newRefreshToken;
             user.RefreshTokenExpires = DateTime.UtcNow.AddDays(7);
 
-            // ✅ Fix: Entity manuell als geändert markieren
+            // ❗ WICHTIG: Änderungen erzwingen
             _context.Users.Update(user);
-
             await _context.SaveChangesAsync();
 
-            // ✅ Neue Tokens zurückgeben
             return Ok(new
             {
                 token = newAccessToken,
                 refreshToken = newRefreshToken
             });
         }
+
+
 
 
 

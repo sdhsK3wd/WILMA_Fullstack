@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using WILMABackend.DTOs;
 
 public class User
 {
@@ -16,7 +17,8 @@ public class User
 
     public string Role { get; set; } = "User";
     
-    
+
+
     public string? RefreshToken { get; set; }
     
     public DateTime? RefreshTokenExpires { get; set; }

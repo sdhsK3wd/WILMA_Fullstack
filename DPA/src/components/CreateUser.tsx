@@ -8,7 +8,7 @@ import type { AxiosError } from "axios";
 import PasswordInput from "./PasswordInput";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
-
+//npm run dev //taskkill /F /IM node.exe
 const CreateUser: React.FC = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
