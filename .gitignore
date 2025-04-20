@@ -1,26 +1,27 @@
-# === FRONTEND (Node.js / React / Vite / etc.) ===
-DPA/node_modules/
-DPA/.env
-DPA/.idea/
-DPA/dist/
-DPA/build/
+# === FRONTEND ===
+/DPA/node_modules/
+/DPA/dist/
+/DPA/build/
+/DPA/.env
+/DPA/.idea/
+/DPA/.vscode/
 
-# === BACKEND (.NET Core / Rider / Visual Studio) ===
-WILMA_Backend/bin/
-WILMA_Backend/obj/
-WILMA_Backend/.vs/
-WILMA_Backend/.idea/
-WILMA_Backend/*.db
+# === BACKEND (.NET / Visual Studio / Rider) ===
+/WILMA_Backend/bin/
+/WILMA_Backend/obj/
+/WILMA_Backend/.vs/
+/WILMA_Backend/.idea/
+/WILMA_Backend/*.db
+/WILMA_Backend/appsettings.json
 
-# === General ===
+# === TEMP & SYSTEM ===
 *.log
-*.user
-*.suo
 *.tmp
 *.DS_Store
-.env
+*.user
+*.suo
+*.swp
 
-
-# Ignore DB temp files
+# === DATABASE ===
 *.db-shm
 *.db-wal
