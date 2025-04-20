@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ✅ Konfiguration laden
 var config = builder.Configuration;
 
-// ✅ Add services
+// ✅ Services hinzufügen
 builder.Services.AddControllers();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<EmailService>();
@@ -21,7 +21,7 @@ var connectionString = config.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<WilmaContext>(options =>
     options.UseSqlite(connectionString));
 
-// ✅ CORS aktivieren (für dein Frontend-Port)
+// ✅ CORS konfigurieren
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -32,7 +32,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// ✅ JWT Auth hinzufügen
+// ✅ JWT Authentifizierung
 var jwtKey = config["Jwt:Key"];
 var jwtIssuer = config["Jwt:Issuer"];
 var jwtAudience = config["Jwt:Audience"];
@@ -56,15 +56,14 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// ✅ Swagger mit JWT-Unterstützung
+// ✅ Swagger mit JWT Unterstützung
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "WILMA API", Version = "v1" });
 
-    // 🔐 Authorize-Button hinzufügen
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Gib hier den JWT ein (mit 'Bearer ' davor)",
+        Description = "JWT eingeben mit 'Bearer ' davor.",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
@@ -86,27 +85,46 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// ✅ Swagger aktivieren im Development-Modus
+// ✅ Swagger aktivieren (nur in Development)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// ✅ Statische Dateien erlauben (z. B. für Profilbilder)
+// ✅ Statische Dateien (z. B. Profilbilder)
 app.UseStaticFiles();
+
+// ✅ Routing aktivieren
+app.UseRouting();
+
+// ✅ Sicherheitsheader hinzufügen (vor der Response!)
+app.Use(async (context, next) =>
+{
+    context.Response.OnStarting(() =>
+    {
+        context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+        context.Response.Headers["Cross-Origin-Resource-Policy"] = "same-origin";
+        context.Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private";
+        context.Response.Headers["Pragma"] = "no-cache";
+        context.Response.Headers["Expires"] = "0";
+        return Task.CompletedTask;
+    });
+
+    await next();
+});
 
 // ✅ CORS aktivieren
 app.UseCors("AllowFrontend");
 
-// ✅ HTTPS und Auth
-app.UseRouting();
+// ✅ Authentifizierung und Autorisierung
 app.UseAuthentication();
 app.UseAuthorization();
 
+// ✅ Controller-Routen
 app.MapControllers();
 
-// ✅ Datenbank-Migration automatisch ausführen
+// ✅ Automatische DB-Migration
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<WilmaContext>();
