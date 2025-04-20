@@ -1,5 +1,5 @@
 [build]
-command = "cd WILMA_Backend && dotnet restore && dotnet publish -c Release -o ../out"
+command = "cd WILMA_Backend && dotnet restore && dotnet publish WILMA_Backend.csproj -c Release -o out"
 
 [deploy]
-command = "dotnet out/WILMA_Backend.dll"
+command = "dotnet WILMA_Backend/out/WILMA_Backend.dll"
