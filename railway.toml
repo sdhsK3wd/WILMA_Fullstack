@@ -1,5 +1,2 @@
 [build]
-command = "cd WILMA_Backend && dotnet publish -c Release -o ./publish"
-
-[deploy]
-command = "cd WILMA_Backend && dotnet ./publish/WILMA_Backend.dll"
+builder = "docker"
