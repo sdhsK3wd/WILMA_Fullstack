@@ -1,5 +1,7 @@
 [build]
-builder = "NIXPACKS"
+builder = "nixpacks"
+buildCommand = "dotnet restore ./WILMA_Backend/WILMA_Backend.csproj"
+startCommand = "dotnet run --project ./WILMA_Backend/WILMA_Backend.csproj"
 
-[start]
-cmd = "dotnet run --project WILMA_Backend/WILMA_Backend.csproj"
+[variables]
+DOTNET_VERSION = "8.0.0"
