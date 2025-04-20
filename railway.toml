@@ -1,6 +1,5 @@
 [build]
-runtime = "dotnet@8.0"
-command = "cd WILMA_Backend && dotnet publish -c Release -o ../publish"
+command = "cd WILMA_Backend && dotnet restore && dotnet publish -c Release -o ../out"
 
 [deploy]
-command = "dotnet WILMA_Backend.dll"
+command = "dotnet out/WILMA_Backend.dll"
