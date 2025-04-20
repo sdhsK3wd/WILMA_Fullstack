@@ -1,8 +1,5 @@
 [build]
-command = "dotnet build WILMA_Backend/WILMA_Backend.csproj"
+builder = "NIXPACKS"
 
 [start]
-command = "dotnet run --project WILMA_Backend/WILMA_Backend.csproj"
-
-[deploy]
-numReplicas = 1
+cmd = "dotnet run --project WILMA_Backend/WILMA_Backend.csproj"
