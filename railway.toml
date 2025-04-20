@@ -1,5 +1,8 @@
 [build]
-builder = "Docker"
+command = "dotnet build WILMA_Backend/WILMA_Backend.csproj"
+
+[start]
+command = "dotnet run --project WILMA_Backend/WILMA_Backend.csproj"
 
 [deploy]
-startCommand = "dotnet run --project WILMA_Backend/WILMA_Backend.csproj"
+numReplicas = 1
