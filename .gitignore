@@ -25,3 +25,13 @@
 # === DATABASE ===
 *.db-shm
 *.db-wal
+
+# Bilder nicht tracken
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+
+# Optional: Ordner, in dem Profilbilder gespeichert werden
+/public/profile_images/
