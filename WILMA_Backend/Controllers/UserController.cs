@@ -223,7 +223,29 @@ namespace WILMABackend.Controllers
             var onlineUsers = await _context.Users.CountAsync(u => u.IsOnline);
             return Ok(new { onlineUsers });
         }
-        
+        [Authorize(Roles = "Admin")]
+        [HttpPost("upload-csv")]
+        public async Task<IActionResult> UploadCsv(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest(new { message = "Keine Datei hochgeladen." });
+
+            var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+
+            if (!Directory.Exists(uploadsPath))
+                Directory.CreateDirectory(uploadsPath);
+
+            var fileName = $"{Guid.NewGuid()}_{file.FileName}";
+            var filePath = Path.Combine(uploadsPath, fileName);
+
+            await using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return Ok(new { message = "CSV hochgeladen!", fileName });
+        }
+
         [Authorize]
         [HttpPut("update-profile")]
         public async Task<IActionResult> UpdateProfile([FromBody] ProfileUpdateDTO profileUpdateDTO)

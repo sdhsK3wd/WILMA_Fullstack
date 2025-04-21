@@ -7,6 +7,12 @@ using WILMABackend.Data;
 using WILMABackend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+{
+    Console.WriteLine("❌ UNHANDLED EXCEPTION:");
+    Console.WriteLine(e.ExceptionObject?.ToString());
+};
+
 
 // ✅ Konfiguration laden
 var config = builder.Configuration;
@@ -34,6 +40,11 @@ builder.Services.AddCors(options =>
 
 // ✅ JWT Authentifizierung
 var jwtKey = config["Jwt:Key"];
+if (string.IsNullOrWhiteSpace(jwtKey))
+{
+    throw new Exception("❌ JWT Key fehlt! Prüfe appsettings.json oder den Build-Ordner.");
+}
+
 var jwtIssuer = config["Jwt:Issuer"];
 var jwtAudience = config["Jwt:Audience"];
 

@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import styles from "../styles/Dashboard.module.css";
 import Navbar from "./Navbar";
 import OnlineUserCount from "./OnlineUserCount";
-
+import axios from "../api/axiosInstance";
+import toast from "react-hot-toast";
 
 const Dashboard: React.FC = () => {
     const [userRole, setUserRole] = useState("");
@@ -23,8 +24,24 @@ const Dashboard: React.FC = () => {
             console.log("🚨 Kein Benutzer gefunden, umleiten...");
             navigate("/login", { replace: true });
         }
-    }, []); // ✅ Empty dependency array ensures it runs only once
+    }, []);
 
+    const handleCsvUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            await axios.post("/users/upload-csv", formData, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+            toast.success("CSV erfolgreich hochgeladen!");
+        } catch (err) {
+            toast.error("Upload fehlgeschlagen.");
+        }
+    };
 
     return (
         <div className={styles.dashboardContainer}>
@@ -34,41 +51,18 @@ const Dashboard: React.FC = () => {
                     <p>Angemeldet als: <strong>{userName}</strong> (Rolle: <strong>{userRole}</strong>)</p>
                     <p>Email: <strong>{userEmail}</strong></p>
                 </div>
-                <h2>Dashboard</h2>
-                <OnlineUserCount /> {/* Zeige die Anzahl der Online-Benutzer an */}
-                <div className={styles.statsContainer}>
-                    <div className={styles.statCard}>
-                        <h3>Historic Water Data</h3>
-                        <p>03/02/2024 - 20/08/2024</p>
-                        <p>All Day</p>
+
+                <OnlineUserCount />
+
+                {userRole === "Admin" && (
+                    <div className={styles.uploadSection}>
+                        <h3>📁 CSV Datei hochladen</h3>
+                        <input type="file" accept=".csv" onChange={handleCsvUpload} />
                     </div>
-                    <div className={styles.statCard}>
-                        <h3>Waterflow</h3>
-                        <p>32,451</p>
-                    </div>
-                    <div className={styles.statCard}>
-                        <h3>Loss</h3>
-                        <p>15,236</p>
-                    </div>
-                    <div className={styles.statCard}>
-                        <h3>Bezirk - Tulin</h3>
-                    </div>
-                    <div className={styles.statCard}>
-                        <h3>Status</h3>
-                    </div>
-                    <div className={styles.statCard}>
-                        <h3>Sender Water</h3>
-                        <p>32,451</p>
-                    </div>
-                    <div className={styles.statCard}>
-                        <h3>Arrived Water</h3>
-                        <p>17,215</p>
-                    </div>
-                </div>
+                )}
             </main>
         </div>
     );
 };
 
 export default Dashboard;
-
