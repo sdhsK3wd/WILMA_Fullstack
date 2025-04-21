@@ -8,7 +8,7 @@ import type { AxiosError } from "axios";
 import PasswordInput from "./PasswordInput";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
-//npm run dev //taskkill /F /IM node.exe
+
 const CreateUser: React.FC = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -73,40 +73,58 @@ const CreateUser: React.FC = () => {
         <div className={styles.dashboardContainer}>
             <Navbar />
             <main className={styles.mainContent}>
-                <h2>Neuen Benutzer erstellen</h2>
-                <label>Admin-Bestätigung (E-Mail eingeben):</label>
-                <input
-                    type="email"
-                    placeholder="Admin E-Mail"
-                    value={adminEmail}
-                    onChange={(e) => setAdminEmail(e.target.value)}
-                />
-                <input
-                    type="text"
-                    placeholder="Benutzername"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <input
-                    type="email"
-                    placeholder="E-Mail"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <PasswordInput
-                    value={password}
-                    onChange={setPassword}
-                    placeholder="Passwort"
-                    showStrength={true}
-                />
-                <label>Rolle wählen:</label>
-                <select value={role} onChange={(e) => setRole(e.target.value)}>
-                    <option value="User">User</option>
-                    <option value="Admin">Admin</option>
-                </select>
-                <button onClick={handleCreateUser} disabled={loading}>
-                    {loading ? <ClipLoader size={18} color="#fff" /> : "Benutzer erstellen"}
-                </button>
+                <div className={styles.formCard}>
+                    <h2>Neuen Benutzer erstellen</h2>
+
+                    <div className={styles.inputGroup}>
+                        <label>Admin-E-Mail (zur Bestätigung):</label>
+                        <input
+                            type="email"
+                            value={adminEmail}
+                            onChange={(e) => setAdminEmail(e.target.value)}
+                        />
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                        <label>Benutzername:</label>
+                        <input
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                        <label>E-Mail:</label>
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                        <label>Passwort:</label>
+                        <PasswordInput
+                            value={password}
+                            onChange={setPassword}
+                            placeholder="Passwort"
+                            showStrength={true}
+                        />
+                    </div>
+
+                    <div className={styles.inputGroup}>
+                        <label>Rolle wählen:</label>
+                        <select value={role} onChange={(e) => setRole(e.target.value)}>
+                            <option value="User">User</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+
+                    <button onClick={handleCreateUser} disabled={loading}>
+                        {loading ? <ClipLoader size={18} color="#fff" /> : "Benutzer erstellen"}
+                    </button>
+                </div>
             </main>
         </div>
     );

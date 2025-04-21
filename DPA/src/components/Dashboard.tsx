@@ -9,7 +9,6 @@ import toast from "react-hot-toast";
 const Dashboard: React.FC = () => {
     const [userRole, setUserRole] = useState("");
     const [userName, setUserName] = useState("");
-    const [userEmail, setUserEmail] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,7 +18,6 @@ const Dashboard: React.FC = () => {
             const parsedUser = JSON.parse(storedUser);
             setUserRole(parsedUser.role);
             setUserName(parsedUser.username);
-            setUserEmail(parsedUser.email);
         } else {
             console.log("🚨 Kein Benutzer gefunden, umleiten...");
             navigate("/login", { replace: true });
@@ -47,16 +45,14 @@ const Dashboard: React.FC = () => {
         <div className={styles.dashboardContainer}>
             <Navbar />
             <main className={styles.mainContent}>
-                <div className={styles.userInfo}>
-                    <p>Angemeldet als: <strong>{userName}</strong> (Rolle: <strong>{userRole}</strong>)</p>
-                    <p>Email: <strong>{userEmail}</strong></p>
+                <div className={styles.userCard}>
+                    <h2>{userName} <span className={styles.role}>({userRole})</span></h2>
+                    <p className={styles.onlineStatus}>Online-Benutzer: <strong>1</strong></p>
                 </div>
-
-                <OnlineUserCount />
 
                 {userRole === "Admin" && (
                     <div className={styles.uploadSection}>
-                        <h3>📁 CSV Datei hochladen</h3>
+                        <h3>CSV Datei hochladen</h3>
                         <input type="file" accept=".csv" onChange={handleCsvUpload} />
                     </div>
                 )}

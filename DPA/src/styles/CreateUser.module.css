@@ -1,46 +1,70 @@
 .dashboardContainer {
     display: flex;
     height: 100vh;
-    background-color: #f8f9fa;
-    overflow: hidden; /* Scrollen verhindern */
+    background-color: #f4f6f8;
+    overflow: hidden;
 }
 
 .mainContent {
     flex-grow: 1;
     padding: 40px;
-    background-color: white;
-    margin-left: 285px; /* Platz für die Sidebar */
-    height: 100vh;
-    overflow-y: auto; /* Scrollen nur im Hauptinhalt */
-    padding-left: 20px; /* Weniger Abstand zur Navbar */
+    margin-left: 285px;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
-input, select, button {
+.formCard {
+    background: #fff;
+    padding: 2rem 3rem;
+    border-radius: 12px;
+    max-width: 600px;
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+h2 {
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    color: #333;
+    text-align: center;
+}
+
+.inputGroup {
+    margin-bottom: 1.4rem;
+}
+
+.inputGroup label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #444;
+}
+
+input, select {
+    width: 100%;
+    padding: 0.75rem;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fafafa;
 }
 
 button {
     width: 100%;
-    padding: 10px;
+    padding: 0.75rem;
     background: #007bff;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 1rem;
     cursor: pointer;
-    font-size: 16px;
-    margin-top: 20px;
+    transition: background 0.2s ease-in-out;
 }
 
 button:hover {
-    background-color: #0056b3;
-}
-
-.successMessage {
-    color: green;
-    margin-top: 10px;
+    background: #0056b3;
 }

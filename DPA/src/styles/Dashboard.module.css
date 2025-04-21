@@ -2,30 +2,48 @@
     display: flex;
     height: 100vh;
     background-color: #f8f9fa;
-    overflow: hidden; /* Scrollen verhindern */
+    overflow: hidden;
 }
 
 .mainContent {
     flex-grow: 1;
     padding: 40px;
     background-color: white;
-    margin-left: 300px; /* Platz für die Sidebar */
+    margin-left: 300px;
     height: 100vh;
     overflow-y: auto;
     padding-left: 20px;
 }
 
-.userInfo {
-    margin-bottom: 20px;
+/* Benutzerkarte */
+.userCard {
+    background-color: #f0f0f0;
+    border-left: 6px solid #007bff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.onlineUserCount {
-    margin-bottom: 20px;
-    font-size: 18px;
+.userCard h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #333;
+}
+
+.role {
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: #666;
+}
+
+.onlineStatus {
+    margin-top: 10px;
+    font-size: 1rem;
     color: #007bff;
 }
 
-/* ✅ Neuer Stil für CSV Upload */
+/* CSV Upload */
 .uploadSection {
     margin-top: 2rem;
     padding: 2rem;
