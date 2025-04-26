@@ -24,6 +24,7 @@
 /WILMA_Fullstack/WaterflowForecast/results/
 /WILMA_Fullstack/WaterflowForecast/uploads/
 *.db
+/WaterflowForecast/venv/
 
 # === TEMP & SYSTEM ===
 *.log
