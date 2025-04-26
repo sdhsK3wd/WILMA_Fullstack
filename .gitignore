@@ -23,7 +23,9 @@
 /WILMA_Fullstack/WaterflowForecast/temp_*
 /WILMA_Fullstack/WaterflowForecast/results/
 /WILMA_Fullstack/WaterflowForecast/uploads/
+/WILMA_Fullstack/WaterflowForecast/*.csv
 *.db
+*.csv
 /WaterflowForecast/venv/
 
 # === TEMP & SYSTEM ===
