@@ -1,8 +1,7 @@
 import axios from "axios";
-import API_BASE_URL from "../apiConfig";
 
 const instance = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: "http://127.0.0.1:8000",  // ✅ Direkt auf dein FastAPI Backend zeigen!
 });
 
 // ✅ Request Interceptor: Token anhängen
@@ -32,8 +31,8 @@ instance.interceptors.response.use(
                 const user = JSON.parse(localStorage.getItem("user") || "{}");
                 if (!user?.refreshToken) throw new Error("Kein Refresh Token gefunden.");
 
-                // 🛠️ WICHTIG: /api/users/refresh-token!
-                const refreshResponse = await axios.post(`${API_BASE_URL}/api/users/refresh-token`, {
+                // Hier musst du auf den richtigen Endpunkt achten (optional!)
+                const refreshResponse = await axios.post(`http://127.0.0.1:8000/api/users/refresh-token`, {
                     token: user.refreshToken
                 });
 
@@ -45,7 +44,6 @@ instance.interceptors.response.use(
 
                 localStorage.setItem("user", JSON.stringify(updatedUser));
 
-                // Retry mit neuem Token
                 originalRequest.headers.Authorization = `Bearer ${updatedUser.token}`;
                 return instance(originalRequest);
 

@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import styles from "../styles/Dashboard.module.css";
 import Navbar from "./Navbar";
 import OnlineUserCount from "./OnlineUserCount";
-import axios from "axios";
+import axios from "../api/axiosInstance"; // Dein angepasstes axiosInstance
 import toast from "react-hot-toast";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 const Dashboard: React.FC = () => {
     const [userRole, setUserRole] = useState("");
@@ -19,11 +20,24 @@ const Dashboard: React.FC = () => {
             const parsedUser = JSON.parse(storedUser);
             setUserRole(parsedUser.role);
             setUserName(parsedUser.username);
+
+            // Direkt beim Start Forecasts laden
+            fetchForecasts();
         } else {
             console.log("🚨 Kein Benutzer gefunden, umleiten...");
             navigate("/login", { replace: true });
         }
     }, []);
+
+    const fetchForecasts = async () => {
+        try {
+            const response = await axios.get("/forecasts/"); // <<< Wichtig richtige URL
+            setForecastData(response.data);
+        } catch (error) {
+            console.error("Fehler beim Laden der Forecast-Daten:", error);
+            toast.error("Fehler beim Laden der Vorhersagen.");
+        }
+    };
 
     const handleCsvUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -33,12 +47,13 @@ const Dashboard: React.FC = () => {
         formData.append("file", file);
 
         try {
-            const response = await axios.post("http://127.0.0.1:8000/upload_csv/", formData, {
+            await axios.post("/upload_csv/", formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
-            console.log("Vorhersage erhalten:", response.data);
-            toast.success("CSV erfolgreich hochgeladen und Vorhersage erhalten!");
-            setForecastData(response.data);
+            toast.success("CSV erfolgreich hochgeladen!");
+
+            // Nach Upload Daten neu laden
+            fetchForecasts();
         } catch (err) {
             console.error("Fehler beim Upload:", err);
             toast.error("Upload fehlgeschlagen.");
@@ -61,17 +76,19 @@ const Dashboard: React.FC = () => {
                     </div>
                 )}
 
-                {/* Forecast Ergebnisse */}
                 {forecastData.length > 0 && (
                     <div className={styles.forecastSection}>
-                        <h3>Vorhersageergebnisse:</h3>
-                        <ul>
-                            {forecastData.map((item: any, index: number) => (
-                                <li key={index}>
-                                    {item.ds}: {item.yhat.toFixed(2)}
-                                </li>
-                            ))}
-                        </ul>
+                        <h3>Vorhersage Diagramm:</h3>
+                        <div style={{ width: "100%", height: 400 }}>
+                            <ResponsiveContainer>
+                                <LineChart data={forecastData}>
+                                    <XAxis dataKey="date" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Line type="monotone" dataKey="value" stroke="#8884d8" />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </div>
                     </div>
                 )}
             </main>
