@@ -14,6 +14,17 @@
 /WILMA_Backend/*.db
 /WILMA_Backend/appsettings.json
 
+# === BACKEND (FastAPI / Python / KI) ===
+/WILMA_Fullstack/WaterflowForecast/venv/
+/WILMA_Fullstack/WaterflowForecast/__pycache__/
+/WILMA_Fullstack/WaterflowForecast/*.pyc
+/WILMA_Fullstack/WaterflowForecast/*.pyo
+/WILMA_Fullstack/WaterflowForecast/*.pyd
+/WILMA_Fullstack/WaterflowForecast/temp_*
+/WILMA_Fullstack/WaterflowForecast/results/
+/WILMA_Fullstack/WaterflowForecast/uploads/
+*.db
+
 # === TEMP & SYSTEM ===
 *.log
 *.tmp
@@ -26,12 +37,16 @@
 *.db-shm
 *.db-wal
 
-# Bilder nicht tracken
+# === BILDER und DATEIEN NICHT TRACKEN ===
 *.png
 *.jpg
 *.jpeg
 *.gif
 *.webp
 
-# Optional: Ordner, in dem Profilbilder gespeichert werden
+# === PROFILE-BILDER-ORDNER (optional) ===
 /public/profile_images/
+
+# === OPTIONAL: Sonstiges ===
+*.bak
+*.old
