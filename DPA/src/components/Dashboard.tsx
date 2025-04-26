@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import styles from "../styles/Dashboard.module.css";
 import Navbar from "./Navbar";
 import OnlineUserCount from "./OnlineUserCount";
-import axios from "../api/axiosInstance";
+import axios from "axios";
 import toast from "react-hot-toast";
 
 const Dashboard: React.FC = () => {
     const [userRole, setUserRole] = useState("");
     const [userName, setUserName] = useState("");
+    const [forecastData, setForecastData] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -32,11 +33,14 @@ const Dashboard: React.FC = () => {
         formData.append("file", file);
 
         try {
-            await axios.post("/users/upload-csv", formData, {
+            const response = await axios.post("http://127.0.0.1:8000/upload_csv/", formData, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
-            toast.success("CSV erfolgreich hochgeladen!");
+            console.log("Vorhersage erhalten:", response.data);
+            toast.success("CSV erfolgreich hochgeladen und Vorhersage erhalten!");
+            setForecastData(response.data);
         } catch (err) {
+            console.error("Fehler beim Upload:", err);
             toast.error("Upload fehlgeschlagen.");
         }
     };
@@ -54,6 +58,20 @@ const Dashboard: React.FC = () => {
                     <div className={styles.uploadSection}>
                         <h3>CSV Datei hochladen</h3>
                         <input type="file" accept=".csv" onChange={handleCsvUpload} />
+                    </div>
+                )}
+
+                {/* Forecast Ergebnisse */}
+                {forecastData.length > 0 && (
+                    <div className={styles.forecastSection}>
+                        <h3>Vorhersageergebnisse:</h3>
+                        <ul>
+                            {forecastData.map((item: any, index: number) => (
+                                <li key={index}>
+                                    {item.ds}: {item.yhat.toFixed(2)}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 )}
             </main>

@@ -1,4 +1,0 @@
-Schritt	Befehl
-In Ordner gehen   	cd Pfad\zu\WILMA_Fullstack\WaterflowForecast
-venv aktivieren	        .\venv\Scripts\activate
-Server starten	        python -m uvicorn main:app --reload
