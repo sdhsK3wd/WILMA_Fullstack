@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WILMABackend.Data;
 
@@ -10,9 +11,11 @@ using WILMABackend.Data;
 namespace WILMA_Backend.Migrations
 {
     [DbContext(typeof(WilmaContext))]
-    partial class WilmaContextModelSnapshot : ModelSnapshot
+    [Migration("20250430000113_AddVotingModels")]
+    partial class AddVotingModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
@@ -82,12 +85,13 @@ namespace WILMA_Backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -106,7 +110,6 @@ namespace WILMA_Backend.Migrations
 
                     b.Property<string>("Text")
                         .IsRequired()
-                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -116,7 +119,30 @@ namespace WILMA_Backend.Migrations
                     b.ToTable("PollOptions");
                 });
 
-            modelBuilder.Entity("WILMABackend.Models.Vote", b =>
+            modelBuilder.Entity("WILMA_Backend.Models.UserVote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("VoteOptionId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("VotedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VoteOptionId");
+
+                    b.ToTable("UserVotes");
+                });
+
+            modelBuilder.Entity("WILMA_Backend.Models.Vote", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -132,19 +158,28 @@ namespace WILMA_Backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("VotedAt")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PollId");
 
                     b.HasIndex("PollOptionId");
 
-                    b.HasIndex("UserId", "PollId")
-                        .IsUnique();
-
                     b.ToTable("Votes");
+                });
+
+            modelBuilder.Entity("WILMA_Backend.Models.VoteOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VoteOptions");
                 });
 
             modelBuilder.Entity("WILMABackend.Models.PollOption", b =>
@@ -158,7 +193,18 @@ namespace WILMA_Backend.Migrations
                     b.Navigation("Poll");
                 });
 
-            modelBuilder.Entity("WILMABackend.Models.Vote", b =>
+            modelBuilder.Entity("WILMA_Backend.Models.UserVote", b =>
+                {
+                    b.HasOne("WILMA_Backend.Models.VoteOption", "VoteOption")
+                        .WithMany("UserVotes")
+                        .HasForeignKey("VoteOptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("VoteOption");
+                });
+
+            modelBuilder.Entity("WILMA_Backend.Models.Vote", b =>
                 {
                     b.HasOne("WILMABackend.Models.Poll", "Poll")
                         .WithMany("Votes")
@@ -169,7 +215,7 @@ namespace WILMA_Backend.Migrations
                     b.HasOne("WILMABackend.Models.PollOption", "PollOption")
                         .WithMany()
                         .HasForeignKey("PollOptionId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Poll");
@@ -182,6 +228,11 @@ namespace WILMA_Backend.Migrations
                     b.Navigation("Options");
 
                     b.Navigation("Votes");
+                });
+
+            modelBuilder.Entity("WILMA_Backend.Models.VoteOption", b =>
+                {
+                    b.Navigation("UserVotes");
                 });
 #pragma warning restore 612, 618
         }

@@ -5,29 +5,37 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using WILMABackend.Data;
 using WILMABackend.Services;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// ✅ Globaler Fehler-Logger
 AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
 {
     Console.WriteLine("❌ UNHANDLED EXCEPTION:");
     Console.WriteLine(e.ExceptionObject?.ToString());
 };
 
-
 // ✅ Konfiguration laden
 var config = builder.Configuration;
 
-// ✅ Services hinzufügen
-builder.Services.AddControllers();
+// ✅ Services
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; // 🔥 Verhindert Objektzyklen
+        options.JsonSerializerOptions.WriteIndented = true;
+    });
+
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<EmailService>();
 
-// ✅ Datenbank einbinden
+// ✅ DB konfigurieren
 var connectionString = config.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<WilmaContext>(options =>
     options.UseSqlite(connectionString));
 
-// ✅ CORS konfigurieren
+// ✅ CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -41,9 +49,7 @@ builder.Services.AddCors(options =>
 // ✅ JWT Authentifizierung
 var jwtKey = config["Jwt:Key"];
 if (string.IsNullOrWhiteSpace(jwtKey))
-{
-    throw new Exception("❌ JWT Key fehlt! Prüfe appsettings.json oder den Build-Ordner.");
-}
+    throw new Exception("❌ JWT Key fehlt! Prüfe appsettings.json oder Umgebungsvariablen.");
 
 var jwtIssuer = config["Jwt:Issuer"];
 var jwtAudience = config["Jwt:Audience"];
@@ -67,14 +73,14 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// ✅ Swagger mit JWT Unterstützung
+// ✅ Swagger (für Tests mit JWT)
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "WILMA API", Version = "v1" });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT eingeben mit 'Bearer ' davor.",
+        Description = "JWT Token mit 'Bearer' Präfix angeben.",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
@@ -89,27 +95,28 @@ builder.Services.AddSwaggerGen(c =>
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            Array.Empty<string>()
         }
     });
 });
 
 var app = builder.Build();
 
-// ✅ Swagger aktivieren (nur in Development)
+// ✅ Swagger aktivieren in Entwicklung
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// ✅ Statische Dateien (z. B. Profilbilder)
+// ✅ Statische Dateien bereitstellen (z.B. Profilbilder)
 app.UseStaticFiles();
 
-// ✅ Routing aktivieren
+// ✅ Routing
 app.UseRouting();
 
-// ✅ Sicherheitsheader hinzufügen (vor der Response!)
+// ✅ Zusätzliche Sicherheitsheader
 app.Use(async (context, next) =>
 {
     context.Response.OnStarting(() =>
@@ -125,21 +132,19 @@ app.Use(async (context, next) =>
     await next();
 });
 
-// ✅ CORS aktivieren
+// ✅ CORS & Auth
 app.UseCors("AllowFrontend");
-
-// ✅ Authentifizierung und Autorisierung
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ✅ Controller-Routen
+// ✅ Controller-Routen aktivieren
 app.MapControllers();
 
-// ✅ Automatische DB-Migration
+// ✅ Automatische DB-Migration bei Start
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<WilmaContext>();
-    db.Database.Migrate();
+    db.Database.Migrate(); // Achtung: Entferne Kommentar, wenn Migrationen vorhanden
 }
 
 app.Run();

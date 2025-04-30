@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../api/axiosInstance";
 
-interface User {
+export interface User {
     id: number;
     username: string;
     email: string;

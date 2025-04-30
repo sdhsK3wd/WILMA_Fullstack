@@ -250,15 +250,20 @@ namespace WILMABackend.Controllers
         [HttpPut("update-profile")]
         public async Task<IActionResult> UpdateProfile([FromBody] ProfileUpdateDTO profileUpdateDTO)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == profileUpdateDTO.Email);
+            // Hole User ID aus dem JWT-Token
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(new { message = "User-ID nicht gefunden." });
+
+            var user = await _context.Users.FindAsync(int.Parse(userId));
 
             if (user == null)
                 return NotFound(new { message = "Benutzer nicht gefunden." });
 
-            // 🚨 Sanitize user input to prevent XSS
+            // Sanitizing
             user.PhoneNumber = profileUpdateDTO.PhoneNumber?.Replace("<", "").Replace(">", "");
             user.Location = profileUpdateDTO.Location?.Replace("<", "").Replace(">", "");
-            user.ProfileImageUrl = profileUpdateDTO.ProfileImageUrl;
 
             await _context.SaveChangesAsync();
 
@@ -268,11 +273,21 @@ namespace WILMABackend.Controllers
 
 
 
+
+        [Authorize]
         [HttpPost("upload-profile-image")]
         public async Task<IActionResult> UploadProfileImage(IFormFile file)
         {
             if (file == null || file.Length == 0)
                 return BadRequest(new { message = "Kein Bild hochgeladen." });
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized(new { message = "User-ID nicht gefunden." });
+
+            var user = await _context.Users.FindAsync(int.Parse(userIdClaim));
+            if (user == null)
+                return NotFound(new { message = "Benutzer nicht gefunden." });
 
             var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/profile-images");
 
@@ -289,8 +304,15 @@ namespace WILMABackend.Controllers
 
             var imageUrl = $"{Request.Scheme}://{Request.Host}/profile-images/{fileName}";
 
+            // ❗️ Hier musst du die URL in der Datenbank setzen:
+            user.ProfileImageUrl = imageUrl;
+
+            _context.Users.Update(user); // Stelle explizit sicher, dass EF Core den User updated
+            await _context.SaveChangesAsync(); // Änderungen in DB speichern
+
             return Ok(new { imageUrl });
         }
+
 
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
