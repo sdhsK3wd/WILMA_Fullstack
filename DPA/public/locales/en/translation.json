@@ -18,7 +18,9 @@
     "userDataNotLoadedToast": "User data not fully loaded.",
     "yes": "Yes",
     "no": "No",
-    "none": "None"
+    "none": "None",
+    "cancelButton": "Cancel",
+    "saveButton": "Save"
   },
   "navbar": {
     "profileSettings": "Settings",
@@ -474,6 +476,32 @@
       "fieldsRequired": "Please enter email and password.",
       "loginSuccess": "Login successful!",
       "loginErrorGeneric": "Login failed. Check email and password."
+    }
+  },
+  "forgotPassword": {
+    "pageTitle": "Reset Password",
+    "step1": {
+      "description": "Enter your email address to receive a password reset link.",
+      "emailLabel": "Your Email",
+      "sendResetLinkButton": "Send Reset Link"
+    },
+    "step2": {
+      "description": "Please enter your new password.",
+      "newPasswordLabel": "New Password",
+      "confirmPasswordLabel": "Confirm Password",
+      "togglePasswordVisibilityAriaLabel": "toggle password visibility",
+      "toggleConfirmPasswordVisibilityAriaLabel": "toggle confirm password visibility",
+      "setPasswordButton": "Set Password"
+    },
+    "toast": {
+      "enterEmail": "Please enter your email address.",
+      "resetEmailSent": "Password reset email sent. Please check your inbox.",
+      "errorSendingEmail": "Error sending email.",
+      "invalidToken": "No valid reset token found or token expired.",
+      "fillAllPasswordFields": "Please fill in both password fields.",
+      "passwordsDoNotMatch": "The entered passwords do not match.",
+      "passwordChangedSuccess": "Password successfully changed.",
+      "errorResettingPassword": "Error resetting password."
     }
   }
 }

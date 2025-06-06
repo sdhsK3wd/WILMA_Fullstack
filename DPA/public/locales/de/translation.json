@@ -18,7 +18,9 @@
     "userDataNotLoadedToast": "Benutzerdaten nicht vollständig geladen.",
     "yes": "Ja",
     "no": "Nein",
-    "none": "Keine"
+    "none": "Keine",
+    "cancelButton": "Abbrechen",
+    "saveButton": "Speichern"
   },
   "navbar": {
     "profileSettings": "Einstellungen",
@@ -30,7 +32,7 @@
     "forecastAnalyse": "Analyse",
     "forecastStatus": "Status / Warnungen",
     "forecastTitle": "Prognose",
-    "polls": "Umfragen",
+    "polls": "Abstimmungen",
     "logs": "Logs",
     "pollsTitle": "Abstimmungen",
     "systemTitle": "System"
@@ -250,8 +252,8 @@
     "appBarTitle": "Status & Warnungen",
     "pageTitle": "System-Status & Warnungen",
     "filters": {
-      "severityLabel": "Filtern nach Schwere",
-      "severityAll": "Alle",
+      "severityLabel": "Schweregrad",
+      "severityAll": "Alle Schweregrade",
       "severityHigh": "Hoch",
       "severityMedium": "Mittel",
       "severityLow": "Niedrig"
@@ -474,6 +476,32 @@
       "fieldsRequired": "Bitte E-Mail und Passwort eingeben.",
       "loginSuccess": "Login erfolgreich!",
       "loginErrorGeneric": "Login fehlgeschlagen. Überprüfe E-Mail und Passwort."
+    }
+  },
+  "forgotPassword": {
+    "pageTitle": "Passwort zurücksetzen",
+    "step1": {
+      "description": "Gib deine E-Mail-Adresse ein, um einen Link zum Zurücksetzen deines Passworts zu erhalten.",
+      "emailLabel": "Deine E-Mail",
+      "sendResetLinkButton": "Reset-Link senden"
+    },
+    "step2": {
+      "description": "Bitte gib dein neues Passwort ein.",
+      "newPasswordLabel": "Neues Passwort",
+      "confirmPasswordLabel": "Passwort bestätigen",
+      "togglePasswordVisibilityAriaLabel": "Passwort Sichtbarkeit umschalten",
+      "toggleConfirmPasswordVisibilityAriaLabel": "Bestätigungspasswort Sichtbarkeit umschalten",
+      "setPasswordButton": "Passwort setzen"
+    },
+    "toast": {
+      "enterEmail": "Bitte gib deine E-Mail-Adresse ein.",
+      "resetEmailSent": "E-Mail zum Zurücksetzen wurde gesendet. Bitte prüfe dein Postfach.",
+      "errorSendingEmail": "Fehler beim Senden der E-Mail.",
+      "invalidToken": "Kein gültiger Reset-Token gefunden oder Token abgelaufen.",
+      "fillAllPasswordFields": "Bitte fülle beide Passwortfelder aus.",
+      "passwordsDoNotMatch": "Die eingegebenen Passwörter stimmen nicht überein.",
+      "passwordChangedSuccess": "Passwort erfolgreich geändert.",
+      "errorResettingPassword": "Fehler beim Zurücksetzen des Passworts."
     }
   }
 }

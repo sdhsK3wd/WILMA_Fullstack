@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import API_BASE_URL from "../apiConfig";
 import type { AxiosError } from "axios";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next"; // <-- HINZUGEFÜGT: Importiere useTranslation
 
 import {
     Box,
@@ -37,6 +38,7 @@ const ForgotPassword: React.FC = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const theme = useTheme();
+    const { t } = useTranslation(); // <-- HINZUGEFÜGT: Initialisiere useTranslation
 
     useEffect(() => {
         const tokenFromURL = searchParams.get("token");
@@ -49,17 +51,17 @@ const ForgotPassword: React.FC = () => {
     const handleEmailSubmit = async (event: React.FormEvent) => {
         event.preventDefault(); // Prevent default form submission
         if (!email) {
-            toast.error("Bitte gib deine E-Mail-Adresse ein.");
+            toast.error(t("forgotPassword.toast.enterEmail")); // <-- ÜBERSETZT
             return;
         }
         setLoading(true);
         try {
             const response = await axios.post(`${API_BASE_URL}/users/forgot-password`, { email });
-            toast.success(response.data.message || "E-Mail zum Zurücksetzen wurde gesendet. Bitte prüfe dein Postfach.");
+            toast.success(response.data.message || t("forgotPassword.toast.resetEmailSent")); // <-- ÜBERSETZT
             // Optionally stay on step 1 or navigate/clear field
         } catch (error) {
             const err = error as AxiosError<{ message?: string }>;
-            toast.error(err.response?.data?.message || "Fehler beim Senden der E-Mail.");
+            toast.error(err.response?.data?.message || t("forgotPassword.toast.errorSendingEmail")); // <-- ÜBERSETZT
         }
         setLoading(false);
     };
@@ -67,15 +69,15 @@ const ForgotPassword: React.FC = () => {
     const handleResetPassword = async (event: React.FormEvent) => {
         event.preventDefault(); // Prevent default form submission
         if (!token) {
-            toast.error("Kein gültiger Reset-Token gefunden oder Token abgelaufen.");
+            toast.error(t("forgotPassword.toast.invalidToken")); // <-- ÜBERSETZT
             return;
         }
         if (!newPassword || !confirmPassword) {
-            toast.error("Bitte fülle beide Passwortfelder aus.");
+            toast.error(t("forgotPassword.toast.fillAllPasswordFields")); // <-- ÜBERSETZT
             return;
         }
         if (newPassword !== confirmPassword) {
-            toast.error("Die eingegebenen Passwörter stimmen nicht überein.");
+            toast.error(t("forgotPassword.toast.passwordsDoNotMatch")); // <-- ÜBERSETZT
             return;
         }
         // Add password complexity validation if needed here
@@ -83,11 +85,11 @@ const ForgotPassword: React.FC = () => {
         setLoading(true);
         try {
             const response = await axios.post(`${API_BASE_URL}/users/reset-password`, { token, newPassword });
-            toast.success(response.data.message || "Passwort erfolgreich geändert.");
+            toast.success(response.data.message || t("forgotPassword.toast.passwordChangedSuccess")); // <-- ÜBERSETZT
             setTimeout(() => navigate("/login"), 2500);
         } catch (error) {
             const err = error as AxiosError<{ message?: string }>;
-            toast.error(err.response?.data?.message || "Fehler beim Zurücksetzen des Passworts.");
+            toast.error(err.response?.data?.message || t("forgotPassword.toast.errorResettingPassword")); // <-- ÜBERSETZT
         }
         setLoading(false);
     };
@@ -133,18 +135,18 @@ const ForgotPassword: React.FC = () => {
                             <LockResetIcon />
                         </Avatar>
                         <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold' }}>
-                            Passwort zurücksetzen
+                            {t("forgotPassword.pageTitle")} {/* <-- ÜBERSETZT */}
                         </Typography>
 
                         {step === 1 ? (
                             <Stack spacing={3} component="form" onSubmit={handleEmailSubmit} sx={{ width: '100%'}}>
                                 <Typography variant="body2" color="text.secondary" textAlign="center">
-                                    Gib deine E-Mail-Adresse ein, um einen Link zum Zurücksetzen deines Passworts zu erhalten.
+                                    {t("forgotPassword.step1.description")} {/* <-- ÜBERSETZT */}
                                 </Typography>
                                 <TextField
                                     fullWidth
                                     id="email"
-                                    label="Deine E-Mail"
+                                    label={t("forgotPassword.step1.emailLabel")}
                                     name="email"
                                     type="email"
                                     autoComplete="email"
@@ -161,26 +163,26 @@ const ForgotPassword: React.FC = () => {
                                     loading={loading}
                                     sx={{ py: 1.5 }}
                                 >
-                                    Reset-Link senden
+                                    {t("forgotPassword.step1.sendResetLinkButton")} {/* <-- ÜBERSETZT */}
                                 </LoadingButton>
                             </Stack>
                         ) : (
                             <Stack spacing={3} component="form" onSubmit={handleResetPassword} sx={{ width: '100%'}}>
                                 <Typography variant="body2" color="text.secondary" textAlign="center">
-                                    Bitte gib dein neues Passwort ein.
+                                    {t("forgotPassword.step2.description")} {/* <-- ÜBERSETZT */}
                                 </Typography>
                                 <FormControl fullWidth variant="outlined">
-                                    <InputLabel htmlFor="reset-new-password">Neues Passwort</InputLabel>
+                                    <InputLabel htmlFor="reset-new-password">{t("forgotPassword.step2.newPasswordLabel")}</InputLabel> {/* <-- ÜBERSETZT */}
                                     <OutlinedInput
                                         id="reset-new-password"
                                         type={showPassword ? 'text' : 'password'}
                                         value={newPassword}
                                         onChange={(e) => setNewPassword(e.target.value)}
                                         disabled={loading}
-                                        label="Neues Passwort"
+                                        label={t("forgotPassword.step2.newPasswordLabel")}
                                         endAdornment={
                                             <InputAdornment position="end">
-                                                <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge="end">
+                                                <IconButton aria-label={t("forgotPassword.step2.togglePasswordVisibilityAriaLabel")} onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge="end"> {/* <-- ÜBERSETZT */}
                                                     {showPassword ? <VisibilityOff /> : <Visibility />}
                                                 </IconButton>
                                             </InputAdornment>
@@ -188,17 +190,17 @@ const ForgotPassword: React.FC = () => {
                                     />
                                 </FormControl>
                                 <FormControl fullWidth variant="outlined">
-                                    <InputLabel htmlFor="reset-confirm-password">Passwort bestätigen</InputLabel>
+                                    <InputLabel htmlFor="reset-confirm-password">{t("forgotPassword.step2.confirmPasswordLabel")}</InputLabel> {/* <-- ÜBERSETZT */}
                                     <OutlinedInput
                                         id="reset-confirm-password"
                                         type={showConfirmPassword ? 'text' : 'password'}
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         disabled={loading}
-                                        label="Passwort bestätigen"
+                                        label={t("forgotPassword.step2.confirmPasswordLabel")}
                                         endAdornment={
                                             <InputAdornment position="end">
-                                                <IconButton aria-label="toggle confirm password visibility" onClick={handleClickShowConfirmPassword} onMouseDown={handleMouseDownConfirmPassword} edge="end">
+                                                <IconButton aria-label={t("forgotPassword.step2.toggleConfirmPasswordVisibilityAriaLabel")} onClick={handleClickShowConfirmPassword} onMouseDown={handleMouseDownConfirmPassword} edge="end"> {/* <-- ÜBERSETZT */}
                                                     {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                                                 </IconButton>
                                             </InputAdornment>
@@ -213,7 +215,7 @@ const ForgotPassword: React.FC = () => {
                                     loading={loading}
                                     sx={{ py: 1.5 }}
                                 >
-                                    Passwort setzen
+                                    {t("forgotPassword.step2.setPasswordButton")} {/* <-- ÜBERSETZT */}
                                 </LoadingButton>
                             </Stack>
                         )}
