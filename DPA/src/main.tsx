@@ -1,72 +1,30 @@
-import React from 'react';
+import React, { Suspense } from 'react'; // Import Suspense
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import './styles/global.css';
-// import './styles/GWTStyles.css'; // Konsti style enable
+// import './styles/GWTStyles.css';
 
-// --- MUI Imports Start ---
-import { ThemeProvider, createTheme, responsiveFontSizes } from '@mui/material/styles';
+// --- MUI Imports ---
+// ThemeProvider is now handled by AppThemeProvider
+// createTheme and responsiveFontSizes are used inside AppThemeProvider
 import CssBaseline from '@mui/material/CssBaseline';
-// --- MUI Imports Ende ---
+import Box from '@mui/material/Box'; // For Suspense fallback
+import CircularProgress from '@mui/material/CircularProgress'; // For Suspense fallback
 
-// --- Theme Definition Start ---
-// (Kopiere die Theme-Definition von meinem vorherigen Post hierher)
-let theme = createTheme({
-    palette: {
-        primary: {
-            main: '#007bff', // Passe dies an GWT-Blau an!
-            light: '#69a1ff',
-            dark: '#0051cb',
-        },
-        secondary: {
-            main: '#80d8ff', // Helles Blau
-            light: '#b5ffff',
-            dark: '#49a7cc',
-        },
-        background: {
-            default: '#ffffff',
-            paper: '#f8f9fa',
-        },
-    },
-    typography: {
-        fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-        h1: { fontFamily: '"Poppins", "Roboto", "Helvetica", "Arial", sans-serif' },
-        h2: { fontFamily: '"Poppins", "Roboto", "Helvetica", "Arial", sans-serif' },
-        h3: { fontFamily: '"Poppins", "Roboto", "Helvetica", "Arial", sans-serif' },
-        h4: { fontFamily: '"Poppins", "Roboto", "Helvetica", "Arial", sans-serif' },
-        h5: { fontFamily: '"Poppins", "Roboto", "Helvetica", "Arial", sans-serif' },
-        h6: { fontFamily: '"Poppins", "Roboto", "Helvetica", "Arial", sans-serif' },
-        button: {
-            textTransform: 'none',
-            fontWeight: 'bold',
-        }
-    },
-    components: {
-        MuiButton: {
-            defaultProps: {
-                variant: 'contained',
-            }
-        },
-        MuiTextField: {
-            defaultProps: {
-                variant: 'outlined',
-                margin: 'normal',
-            }
-        }
-    }
-});
-theme = responsiveFontSizes(theme); // Responsive Fonts aktivieren
-// --- Theme Definition Ende ---
+// --- Custom Theme Provider ---
+import { AppThemeProvider } from './context/ThemeContext'; // Import your theme provider
 
-// --- WICHTIG: Google Fonts Link in public/index.html nicht vergessen! ---
-/*
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-*/
+// --- i18n Initialization ---
+import './i18n'; // Import the i18n configuration file to initialize it
 
+// --- Toaster ---
+import { Toaster } from 'react-hot-toast'; // Keep Toaster import
+
+// --- Remove Inline Theme Definition ---
+// let theme = createTheme({ ... }); // This section is removed
+// theme = responsiveFontSizes(theme); // This is removed
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -74,18 +32,23 @@ const root = ReactDOM.createRoot(
 
 root.render(
     <React.StrictMode>
-        {/* 1. ThemeProvider umschließt alles andere */}
-        <ThemeProvider theme={theme}>
-            {/* 2. CssBaseline direkt nach ThemeProvider */}
-            <CssBaseline />
-            {/* 3. Deine bestehenden Provider */}
-            <BrowserRouter>
-                <AuthProvider>
-                    {/* 4. Deine App */}
-                    <App />
-                    {/* Der Toaster in App.tsx ist okay, da App.tsx jetzt innerhalb des ThemeProviders gerendert wird */}
-                </AuthProvider>
-            </BrowserRouter>
-        </ThemeProvider>
+        {/* Wrap everything in Suspense for i18n loading */}
+        <Suspense fallback={
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: '#121212' /* Initial dark bg */ }}>
+                <CircularProgress color="primary"/>
+            </Box>
+        }>
+            {/* Use AppThemeProvider instead of ThemeProvider + inline theme */}
+            <AppThemeProvider>
+                <CssBaseline enableColorScheme /> {/* enableColorScheme helps with default scrollbars etc. */}
+                <BrowserRouter>
+                    <AuthProvider>
+                        <App />
+                        {/* Place Toaster inside providers if it needs context, otherwise here is fine */}
+                        <Toaster position="bottom-right" />
+                    </AuthProvider>
+                </BrowserRouter>
+            </AppThemeProvider>
+        </Suspense>
     </React.StrictMode>
 );

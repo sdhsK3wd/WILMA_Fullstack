@@ -1,42 +1,46 @@
-// Polls.tsx - Mit Löschfunktion (Korrigiert)
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, Link as RouterLink, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axiosStatic from 'axios'; // Importiert für Typ-Prüfung (isAxiosError)
 import axiosInstance from '../api/axiosInstance'; // Deine konfigurierte Instanz
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext'; // Stellt sicher, dass der Pfad korrekt ist
+import type { User } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 import {
     Box, AppBar, Toolbar, Typography, CssBaseline, Card, CardContent, CardHeader, CardActions,
-    Button, useTheme, CircularProgress, Avatar, Drawer, List, ListItem,
-    ListItemText, ListItemButton, ListItemIcon, Divider, Stack, alpha, ListSubheader,
+    Button, useTheme, CircularProgress, Avatar, Stack, alpha,
     RadioGroup, FormControlLabel, Radio, FormControl,
     LinearProgress,
-    TextField, // Wird im Create-Formular verwendet
-    Paper,     // Wird im Create-Formular verwendet
-    IconButton, // Für Löschen-Button
-    Dialog,     // Für Bestätigungsdialog
+    TextField,
+    Paper,
+    IconButton,
+    Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
-    DialogTitle
+    DialogTitle,
+    Skeleton,
+    Chip as MuiChip,
+    Tooltip
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
 import {
-    Home as HomeIcon,
     HowToVote as PollsIcon,
-    AddCircleOutline as AddIcon,
-    CheckCircle as VotedIcon,
-    RadioButtonUnchecked as RadioButtonUncheckedIcon,
-    RadioButtonChecked as RadioCheckedIcon,
-    Delete as DeleteIcon // Für Löschen-Button
+    AddCircleOutlineRounded as AddIcon,
+    CheckCircleRounded as VotedIcon,
+    RadioButtonUncheckedRounded as RadioButtonUncheckedIcon,
+    RadioButtonCheckedRounded as RadioCheckedIcon,
+    DeleteForeverRounded as DeleteIcon,
+    BarChartRounded as ResultsIcon,
+    EditNoteRounded as CreateFormIcon,
 } from '@mui/icons-material';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 
-// Stelle sicher, dass der Pfad zum Logo korrekt ist
-import logo from '../images/Logo.png';
+import PollsNavbar from './PollsNavbar';
 
-// Interfaces
+// Interfaces (Behalten)
 interface PollOption {
     id: number;
     text: string;
@@ -52,71 +56,13 @@ interface Poll {
     totalVotes: number;
 }
 
-// PollsNavbar Komponente
-const drawerWidth = 240;
-interface PollsNavItem { text: string; icon: React.ReactElement; path: string; }
-const PollsNavbar: React.FC = () => {
-    const location = useLocation();
-    const theme = useTheme();
-    const navItems: PollsNavItem[] = [ { text: 'Abstimmungen', icon: <PollsIcon />, path: '/polls' }, ];
-
-    return (
-        <Drawer variant="permanent" sx={{ width: drawerWidth, flexShrink: 0, [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box', borderRight: `1px solid ${theme.palette.divider}` }, }}>
-            <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 1 }}> <img src={logo} alt="GWT Logo" style={{ height: 40, width: 'auto' }} /> </Toolbar>
-            <Divider />
-            <List sx={{ padding: 1 }}>
-                <ListItem disablePadding sx={{ mb: 0.5 }}>
-                    <ListItemButton component={RouterLink} to="/home" sx={{ borderRadius: 1, '&:hover': { backgroundColor: theme.palette.action.hover, } }}>
-                        <ListItemIcon sx={{ minWidth: 40 }}> <HomeIcon /> </ListItemIcon>
-                        <ListItemText primary="Home" />
-                    </ListItemButton>
-                </ListItem>
-                <Divider sx={{ my: 1 }}/>
-                <ListSubheader sx={{ bgcolor: 'transparent', fontWeight: 'bold', color: 'text.primary' }}> Abstimmungen </ListSubheader>
-                {navItems.map((item) => {
-                    const isSelected = location.pathname === item.path;
-                    return (
-                        <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
-                            <ListItemButton
-                                component={RouterLink}
-                                to={item.path}
-                                selected={isSelected}
-                                sx={{
-                                    borderRadius: 1,
-                                    '&.Mui-selected': {
-                                        backgroundColor: alpha(theme.palette.primary.light, 0.12),
-                                        '&:hover': { backgroundColor: alpha(theme.palette.primary.light, 0.18), },
-                                        '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-                                            color: theme.palette.primary.dark,
-                                            fontWeight: 600,
-                                        },
-                                    },
-                                    '&:hover': { backgroundColor: theme.palette.action.hover, }
-                                }}
-                            >
-                                <ListItemIcon sx={{ minWidth: 40, color: isSelected ? theme.palette.primary.dark : 'inherit' }}>
-                                    {item.icon}
-                                </ListItemIcon>
-                                <ListItemText primary={item.text} />
-                            </ListItemButton>
-                        </ListItem>
-                    );
-                })}
-            </List>
-        </Drawer>
-    );
-};
-
-
-// Hauptkomponente Polls
 const Polls: React.FC = () => {
-    // State Variablen...
     const [isLoading, setIsLoading] = useState(true);
     const [polls, setPolls] = useState<Poll[]>([]);
     const [selectedVote, setSelectedVote] = useState<{ [pollId: number]: number }>({});
     const [votingPollId, setVotingPollId] = useState<number | null>(null);
     const [isCreating, setIsCreating] = useState<boolean>(false);
-    const [newPollTitle, setNewPollTitle] = useState<string>(""); // Wird verwendet
+    const [newPollTitle, setNewPollTitle] = useState<string>("");
     const [newPollDescription, setNewPollDescription] = useState<string>("");
     const [optionsString, setOptionsString] = useState<string>("");
     const [isSubmittingPoll, setIsSubmittingPoll] = useState<boolean>(false);
@@ -124,307 +70,395 @@ const Polls: React.FC = () => {
     const [pollToDelete, setPollToDelete] = useState<Poll | null>(null);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-    // Hooks
     const { user } = useAuth();
     const theme = useTheme();
     const navigate = useNavigate();
+    const location = useLocation();
+    const { t } = useTranslation();
 
-    // Funktion zum Laden der Polls
     const fetchPolls = useCallback(async (source?: string) => {
-        console.log(`fetchPolls aufgerufen von: ${source || 'useEffect'}`);
+        console.log(`WorkspacePolls aufgerufen von: ${source || 'useEffect'}`);
         if (source !== 'handleVoteSubmit - verify') {
             setIsLoading(true);
         }
         try {
+            if (polls.length === 0 && source === 'useEffect' ) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
             const response = await axiosInstance.get<Poll[]>(`/api/Voting`);
             console.log('fetchPolls - Empfangene Daten:', response.data);
             setPolls(response.data);
         } catch (error) {
             console.error("Fehler beim Laden der Abstimmungen:", error);
-            if (axiosStatic.isAxiosError(error) && error.response?.status !== 401) {
-                toast.error(`Fehler beim Laden: ${error.response?.data?.message || error.message}`);
-            } else if (!(error instanceof Error && error.message === "Session expired")) {
-                toast.error("Ein unbekannter Fehler ist beim Laden aufgetreten.");
+            let errorMsg = t("polls.toast.loadingPollsErrorGeneric");
+            if (axiosStatic.isAxiosError(error)) {
+                const backendMessage = error.response?.data?.message || error.message;
+                if (backendMessage) console.warn("Backend error message (loading):", backendMessage);
             }
+            if (!(error instanceof Error && error.message === "Session expired")) toast.error(errorMsg);
+            setPolls([]);
         } finally {
             if (source !== 'handleVoteSubmit - verify') {
                 setIsLoading(false);
             }
         }
-    }, []);
+    }, [t, polls.length]);
 
-    // Effekt zum initialen Laden und bei User-Änderung
     useEffect(() => {
         if (user === undefined) return;
-        if (user === null) {
-            navigate('/login', { replace: true });
-            return;
-        }
+        if (user === null) { navigate('/login', { replace: true }); return; }
         fetchPolls('useEffect');
     }, [user, navigate, fetchPolls]);
 
-    // Handler für Änderungen bei der Abstimmungsauswahl
     const handleVoteChange = (pollId: number, optionIdValue: string | number) => {
         const optionId = typeof optionIdValue === 'string' ? parseInt(optionIdValue, 10) : optionIdValue;
-        if (!isNaN(optionId)) {
-            setSelectedVote(prev => ({ ...prev, [pollId]: optionId }));
-        }
+        if (!isNaN(optionId)) setSelectedVote(prev => ({ ...prev, [pollId]: optionId }));
     };
 
-    // Handler zum Absenden einer Stimme
     const handleVoteSubmit = async (pollId: number) => {
         const optionId = selectedVote[pollId];
-        if (!optionId || !user) return;
+        if (!user) { toast.error(t("common.userDataNotLoadedToast")); return; }
+        if (!optionId) { toast.error(t("polls.toast.votingErrorNoOption")); return; }
         setVotingPollId(pollId);
         const toastId = `voting-toast-${pollId}`;
-        toast.loading('Stimme wird übermittelt...', { id: toastId });
-
-        // Optimistic Update
-        const originalPolls = [...polls];
-        let updatedPollIndex = -1;
-        const updatedPolls = polls.map((p, index) => {
+        toast.loading(t('polls.toast.votingLoading'), { id: toastId });
+        const originalPolls = JSON.parse(JSON.stringify(polls));
+        const updatedPolls = polls.map(p => {
             if (p.id === pollId) {
-                updatedPollIndex = index;
+                const prevUserVoteOptionId = p.userVoteOptionId;
+                const userHadPreviouslyVoted = typeof prevUserVoteOptionId === 'number';
                 return {
-                    ...p,
-                    userVoteOptionId: optionId,
-                    totalVotes: p.totalVotes + 1,
-                    options: p.options.map(opt =>
-                        opt.id === optionId ? { ...opt, votes: opt.votes + 1 } : opt
-                    ),
+                    ...p, userVoteOptionId: optionId,
+                    totalVotes: p.totalVotes + (userHadPreviouslyVoted ? 0 : 1),
+                    options: p.options.map((opt: PollOption) => {
+                        let votes = opt.votes;
+                        if (opt.id === optionId) votes += 1;
+                        else if (userHadPreviouslyVoted && opt.id === prevUserVoteOptionId) votes -= 1;
+                        return { ...opt, votes: Math.max(0, votes) };
+                    }),
                 };
             }
             return p;
         });
         setPolls(updatedPolls);
-        console.log('Optimistic Update - Neuer State gesetzt:', updatedPolls);
-        if (updatedPollIndex !== -1) {
-            console.log('Optimistic Update - Betroffener Poll:', updatedPolls[updatedPollIndex]);
-        }
         setSelectedVote(prev => { const newState = { ...prev }; delete newState[pollId]; return newState; });
-
         try {
             await axiosInstance.post(`/api/Voting/vote/${pollId}`, { optionId });
-            toast.success('Erfolgreich abgestimmt!', { id: toastId });
-            // Optional: await fetchPolls('handleVoteSubmit - verify');
+            toast.success(t('polls.toast.votingSuccess'), { id: toastId });
         } catch (error) {
             console.error("Fehler beim Abstimmen (Backend):", error);
-            let errorMsg = 'Fehler beim Abstimmen.';
-            if (axiosStatic.isAxiosError(error)) { errorMsg = error.response?.data?.message || error.message || errorMsg; }
+            let errorMsg = t('polls.toast.votingErrorGeneric');
+            if (axiosStatic.isAxiosError(error)) {
+                const backendMessage = error.response?.data?.message || error.message;
+                if (backendMessage) console.warn("Backend error message (voting):", backendMessage);
+            }
             toast.error(errorMsg, { id: toastId });
-            // Rollback
             console.log("Rollback optimistic update for poll ID:", pollId);
             setPolls(originalPolls);
-            setSelectedVote(prev => ({ ...prev, [pollId]: optionId }));
-        } finally {
-            setVotingPollId(null);
-        }
+        } finally { setVotingPollId(null); }
     };
 
-    // Handler zum Abbrechen der Poll-Erstellung
     const handleCancelCreate = () => {
-        setIsCreating(false);
-        setNewPollTitle("");
-        setNewPollDescription("");
-        setOptionsString("");
-        setIsSubmittingPoll(false);
+        setIsCreating(false); setNewPollTitle(""); setNewPollDescription(""); setOptionsString(""); setIsSubmittingPoll(false);
     };
 
-    // Handler zum Absenden des neuen Polls
     const handleCreatePollSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        if (!user || !newPollTitle.trim()) return;
+        if (!user) { toast.error(t("common.userDataNotLoadedToast")); return; }
+        if (!newPollTitle.trim()) { toast.error(t("polls.toast.createPollErrorTitleMissing")); return; }
         const validOptions = optionsString.split('\n').map(opt => opt.trim()).filter(opt => opt !== '');
-        if (validOptions.length < 2) { toast.error("Mindestens zwei Optionen sind erforderlich."); return; }
+        if (validOptions.length < 2) { toast.error(t("polls.toast.createPollOptionsMinError")); return; }
         setIsSubmittingPoll(true);
         const toastId = 'create-poll-toast';
-        toast.loading('Abstimmung wird erstellt...', { id: toastId });
+        toast.loading(t('polls.toast.createPollLoading'), { id: toastId });
         try {
-            await axiosInstance.post<Poll>(`/api/Voting/create`, {
-                title: newPollTitle,
-                description: newPollDescription || null,
-                options: validOptions
-            });
-            toast.success('Abstimmung erfolgreich erstellt!', { id: toastId });
-            handleCancelCreate();
-            fetchPolls('handleCreatePollSubmit');
+            await axiosInstance.post<Poll>(`/api/Voting/create`, { title: newPollTitle, description: newPollDescription || null, options: validOptions });
+            toast.success(t('polls.toast.createPollSuccess'), { id: toastId });
+            handleCancelCreate(); fetchPolls('handleCreatePollSubmit');
         } catch (error) {
             console.error("Fehler beim Erstellen:", error);
-            let errorMsg = "Fehler beim Erstellen der Abstimmung.";
+            let errorMsg = t("polls.toast.createPollErrorGeneric");
             if (axiosStatic.isAxiosError(error)) {
-                errorMsg = error.response?.data?.message || error.message || errorMsg;
-                if (error.response?.data?.errors) {
-                    const validationErrors = Object.values(error.response.data.errors).flat();
-                    errorMsg = validationErrors.join(' \n');
+                const backendMessage = error.response?.data?.message || error.message;
+                if (backendMessage) {
+                    console.warn("Backend error message (create poll):", backendMessage);
+                    if (error.response?.data?.errors) {
+                        const validationErrors = Object.values(error.response.data.errors).flat().join(' \n');
+                        errorMsg = `${errorMsg}\n${validationErrors}`;
+                    }
                 }
             }
             toast.error(errorMsg, { id: toastId });
-        } finally {
-            setIsSubmittingPoll(false);
-        }
+        } finally { setIsSubmittingPoll(false); }
     };
 
-    // Handler zum Öffnen des Löschdialogs
-    const handleClickOpenDeleteDialog = (poll: Poll) => {
-        setPollToDelete(poll);
-        setOpenDeleteDialog(true);
-    };
-
-    // Handler zum Schließen des Löschdialogs
-    const handleCloseDeleteDialog = () => {
-        setOpenDeleteDialog(false);
-        setTimeout(() => setPollToDelete(null), 300);
-    };
-
-    // Handler zum Bestätigen des Löschens
+    const handleClickOpenDeleteDialog = (poll: Poll) => { setPollToDelete(poll); setOpenDeleteDialog(true); };
+    const handleCloseDeleteDialog = () => { setOpenDeleteDialog(false); setTimeout(() => setPollToDelete(null), 300); };
     const handleDeletePollConfirm = async () => {
         if (!pollToDelete) return;
         setIsDeleting(true);
         const toastId = `delete-poll-${pollToDelete.id}`;
-        toast.loading('Abstimmung wird gelöscht...', { id: toastId });
+        toast.loading(t('polls.toast.deletePollLoading'), { id: toastId });
         try {
             await axiosInstance.delete(`/api/Voting/${pollToDelete.id}`);
-            toast.success('Abstimmung erfolgreich gelöscht!', { id: toastId });
-            setPolls(prevPolls => prevPolls.filter(p => p.id !== pollToDelete.id));
+            toast.success(t('polls.toast.deletePollSuccess'), { id: toastId });
+            setPolls(prevPolls => prevPolls.filter(p => p.id !== pollToDelete?.id));
         } catch (error) {
             console.error("Fehler beim Löschen:", error);
-            let errorMsg = 'Fehler beim Löschen.';
-            if (axiosStatic.isAxiosError(error)) { errorMsg = error.response?.data?.message || error.message || errorMsg; }
+            let errorMsg = t('polls.toast.deletePollErrorGeneric');
+            if (axiosStatic.isAxiosError(error)) {
+                const backendMessage = error.response?.data?.message || error.message;
+                if (backendMessage) console.warn("Backend error message (delete poll):", backendMessage);
+            }
             toast.error(errorMsg, { id: toastId });
-        } finally {
-            setIsDeleting(false);
-            handleCloseDeleteDialog();
-        }
+        } finally { setIsDeleting(false); handleCloseDeleteDialog(); }
     };
 
+    const pageContainerVariants: Variants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { duration: 0.5, ease: "easeInOut" } }
+    };
+    const listContainerVariants: Variants = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { staggerChildren: 0.12, delayChildren: 0.2 } }
+    };
+    const listItemVariants: Variants = {
+        hidden: { opacity: 0, y: 40, scale: 0.95 },
+        visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.55, type: "spring", stiffness: 100, damping: 18 } },
+        exit: { opacity: 0, y: -20, scale: 0.98, transition: { duration: 0.3, ease: "easeOut" } }
+    };
+    const formVariants: Variants = {
+        hidden: { opacity: 0, y: -30, height: 0, marginBottom: 0, scaleY: 0.9 },
+        visible: { opacity: 1, y: 0, height: 'auto', scaleY: 1, marginBottom: theme.spacing(4), transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1], } },
+        exit: { opacity: 0, y: -20, height: 0, scaleY: 0.9, marginBottom: 0, transition: { duration: 0.35, ease: [0.76, 0, 0.24, 1] } }
+    };
 
-    // --- Rendering Logic ---
-    if (isLoading && polls.length === 0) {
-        return ( <Box sx={{ display: 'flex' }}> <CssBaseline /> <PollsNavbar /> <Box component="main" sx={{ flexGrow: 1, p: 3, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}> <CircularProgress /> </Box> </Box> );
+    const renderPollSkeletons = (count = 2) => (
+        <Stack spacing={3.5} sx={{ maxWidth: '850px', mx: 'auto', width: '100%' }}>
+            {[...Array(count)].map((_, index) => (
+                <Paper key={`skel-poll-${index}`} elevation={0} sx={{
+                    borderRadius: 4, p: 0, overflow: 'hidden',
+                    border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+                    background: alpha(theme.palette.background.paper, 0.7),
+                }}>
+                    <Box sx={{ p: 2.5, borderBottom: `1px solid ${alpha(theme.palette.divider, 0.15)}` }}>
+                        <Skeleton variant="text" width="70%" height={30} sx={{mb: 0.5}}/>
+                        <Skeleton variant="text" width="40%" height={22}/>
+                    </Box>
+                    <Box sx={{ p: 2.5 }}>
+                        <Skeleton variant="text" width="90%" height={20} sx={{ mb: 3 }}/>
+                        <Stack spacing={2.5}>
+                            {[...Array(3)].map(s_idx =>
+                                <Box key={s_idx}>
+                                    <Skeleton variant="text" width="100%" height={24}/>
+                                    <Skeleton variant="rounded" width="100%" height={10} sx={{mt: 0.5, borderRadius: 1}}/>
+                                </Box>
+                            )}
+                        </Stack>
+                    </Box>
+                    <Box sx={{ p: 2, display: 'flex', justifyContent: 'flex-end', borderTop: `1px solid ${alpha(theme.palette.divider, 0.1)}`, bgcolor: alpha(theme.palette.action.hover, 0.2) }}>
+                        <Skeleton variant="rounded" width={120} height={40} sx={{borderRadius: 2}}/>
+                    </Box>
+                </Paper>
+            ))}
+        </Stack>
+    );
+
+    if (user === undefined) {
+        return <Box sx={{ display: 'flex', height: '100vh', width: '100%', justifyContent: 'center', alignItems: 'center', bgcolor: theme.palette.background.default }}><CircularProgress size={40} /></Box>;
     }
-    if (!user) {
-        return ( <Box sx={{ display: 'flex' }}> <CssBaseline /> <PollsNavbar /> <Box component="main" sx={{ flexGrow: 1, p: 3, display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}> <Typography>Benutzerdaten werden geladen...</Typography> </Box> </Box> );
-    }
+    if (user === null) return null;
 
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
+            <AppBar position="fixed" sx={{
+                width: '100%', zIndex: theme.zIndex.drawer + 1,
+                bgcolor: alpha(theme.palette.background.paper, 0.9), backdropFilter: 'blur(12px)',
+                color: 'text.primary', boxShadow: `0px 2px 8px -1px ${alpha(theme.palette.common.black, 0.07)}`,
+                borderBottom: `1px solid ${alpha(theme.palette.divider, 0.15)}`
+            }}>
+                <Toolbar>
+                    <PollsIcon sx={{ mr: 1.5, color: 'primary.main', fontSize: '1.8rem' }} />
+                    <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>{t('polls.appBarTitle')}</Typography>
+                    {user && (<>
+                        {/* HIER IST DIE ÄNDERUNG: component="div" hinzugefügt */}
+                        <Typography component="div" sx={{ mr: 2, display: { xs: 'none', sm: 'block' }, color: 'text.secondary' }}>
+                            {user.username} <MuiChip label={user.role} size="small" variant="outlined" sx={{ml: 0.5, opacity: 0.8}} />
+                        </Typography>
+                        <Avatar src={user.profileImageUrl || undefined} sx={{ bgcolor: theme.palette.primary.main, width: 36, height: 36, fontSize: '0.9rem' }}>{user.username?.charAt(0).toUpperCase()}</Avatar>
+                    </>)}
+                </Toolbar>
+            </AppBar>
+
             <PollsNavbar />
 
-            <Box component="main" sx={{ flexGrow: 1, bgcolor: theme.palette.grey[100], p: { xs: 1, sm: 2, md: 3 }, minHeight: '100vh' }}>
-                {/* AppBar */}
-                <AppBar position="fixed" sx={{ zIndex: theme.zIndex.drawer + 1, backgroundColor: 'white', color: theme.palette.text.primary, boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                    <Toolbar>
-                        <PollsIcon sx={{ mr: 1, color: 'primary.main' }} />
-                        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}> Abstimmungen </Typography>
-                        <Typography sx={{ mr: 2, display: { xs: 'none', sm: 'block' } }}> {user?.username} ({user?.role}) </Typography>
-                        <Avatar src={user?.profileImageUrl || undefined} sx={{ bgcolor: theme.palette.primary.main }}> {user?.username?.charAt(0).toUpperCase()} </Avatar>
-                    </Toolbar>
-                </AppBar>
+            <Box component={motion.main} variants={pageContainerVariants} initial="hidden" animate="visible" sx={{
+                flexGrow: 1,
+                bgcolor: theme.palette.mode === 'dark' ? theme.palette.grey[900] : theme.palette.background.default,
+                p: { xs: 2, sm: 3, md: 4 },
+                minHeight: '100vh',
+            }}>
                 <Toolbar />
-
-                {/* Header Section */}
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, mt: 1, px: { xs: 1, sm: 0}, flexWrap: 'wrap', gap: 2 }}>
-                    <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold', flexGrow: 1 }}> Aktive Abstimmungen </Typography>
-                    {user?.role === 'Admin' && !isCreating && ( <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => setIsCreating(true)} sx={{ transition: 'box-shadow 0.3s ease-in-out', '&:hover': { boxShadow: theme.shadows[4] } }} > Neue Abstimmung </Button> )}
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: {xs: 3, sm: 3.5}, mt: 1.5, px: { xs: 0, sm: 1}, flexWrap: 'wrap', gap: 2 }}>
+                    <Typography variant="h4" component="h1" sx={{ fontWeight: 700, flexGrow: 1, color: 'text.primary' }}>{t('polls.pageTitle')}</Typography>
+                    {user?.role === 'Admin' && !isCreating && (
+                        <Button variant="contained" size="medium" startIcon={<AddIcon />} onClick={() => setIsCreating(true)}
+                                sx={{ borderRadius: 2, px: 2.5, py: 1, boxShadow: theme.shadows[2], '&:hover': { boxShadow: theme.shadows[5], transform: 'translateY(-1px)' }, transition: 'all 0.2s ease-in-out' }} >
+                            {t('polls.createButton')}
+                        </Button>
+                    )}
                 </Box>
 
-                {/* Create Poll Form */}
-                {isCreating && ( // ✅ Korrekte Klammerung für bedingtes Rendering
-                    <Paper elevation={4} sx={{ p: {xs: 1.5, sm: 2}, mb: 3, borderRadius: 2 }}>
-                        <Typography variant="h6" sx={{ mb: 2 }}>Neue Abstimmung erstellen</Typography>
-                        <Box component="form" onSubmit={handleCreatePollSubmit}>
-                            <Stack spacing={2}>
-                                <TextField label="Titel der Abstimmung" value={newPollTitle} onChange={(e) => setNewPollTitle(e.target.value)} fullWidth required autoFocus size="small" />
-                                <TextField label="Beschreibung (Optional)" value={newPollDescription} onChange={(e) => setNewPollDescription(e.target.value)} fullWidth multiline rows={2} size="small" />
-                                <Typography variant="subtitle1" sx={{ mb: -1, fontWeight:'medium' }}>Optionen:</Typography>
-                                <TextField label="Optionen (eine pro Zeile)" value={optionsString} onChange={(e) => setOptionsString(e.target.value)} fullWidth required multiline rows={4} size="small" placeholder="Option 1&#10;Option 2&#10;Option 3..." helperText="Geben Sie jede Antwortmöglichkeit in eine neue Zeile ein." />
-                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, pt: 1 }}>
-                                    <Button onClick={handleCancelCreate} color="inherit" size="small" disabled={isSubmittingPoll}>Abbrechen</Button>
-                                    <LoadingButton type="submit" variant="contained" loading={isSubmittingPoll} size="small">Erstellen</LoadingButton>
+                <AnimatePresence mode="wait">
+                    {isCreating && (
+                        <motion.div key="create-poll-form" variants={formVariants} initial="hidden" animate="visible" exit="exit">
+                            <Paper elevation={0} sx={{
+                                p: { xs: 2, sm: 3, md: 3.5 }, borderRadius: 4,
+                                border: `1px solid ${alpha(theme.palette.divider, 0.25)}`,
+                                background: alpha(theme.palette.background.paper, 0.95),
+                                backdropFilter: theme.palette.mode === 'dark' ? 'blur(3px)' : 'none'
+                            }}>
+                                <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 2.5 }}>
+                                    <Avatar sx={{bgcolor: alpha(theme.palette.primary.main, 0.1), color: 'primary.main', width: 40, height: 40}}> <CreateFormIcon /> </Avatar>
+                                    <Typography variant="h5" sx={{ fontWeight: 600, color: 'text.primary' }}>{t('polls.createFormTitle')}</Typography>
+                                </Stack>
+                                <Box component="form" onSubmit={handleCreatePollSubmit}>
+                                    <Stack spacing={3}>
+                                        <TextField label={t('polls.createFormTitleLabel')} value={newPollTitle} onChange={(e) => setNewPollTitle(e.target.value)} fullWidth required autoFocus
+                                                   variant="outlined" InputProps={{ sx: { borderRadius: 2 } }} />
+                                        <TextField label={t('polls.createFormDescriptionLabel')} value={newPollDescription} onChange={(e) => setNewPollDescription(e.target.value)} fullWidth multiline rows={2}
+                                                   variant="outlined" InputProps={{ sx: { borderRadius: 2 } }} />
+                                        <TextField label={t('polls.createFormOptionsLabel')} value={optionsString} onChange={(e) => setOptionsString(e.target.value)} fullWidth required multiline rows={4}
+                                                   placeholder={t('polls.createFormOptionsPlaceholder')} helperText={t('polls.createFormOptionsHelperText')}
+                                                   variant="outlined" InputProps={{ sx: { borderRadius: 2 } }} />
+                                        <Stack direction="row" justifyContent="flex-end" spacing={1.5} sx={{ pt: 1 }}>
+                                            <Button onClick={handleCancelCreate} color="inherit" variant="text" disabled={isSubmittingPoll} sx={{borderRadius: 2, px: 2}}>{t('common.cancelButton')}</Button>
+                                            <LoadingButton type="submit" variant="contained" loading={isSubmittingPoll} size="medium" sx={{borderRadius: 2, px: 3}}>{t('polls.createSubmitButton')}</LoadingButton>
+                                        </Stack>
+                                    </Stack>
                                 </Box>
-                            </Stack>
-                        </Box>
-                    </Paper>
-                )}
-
-                {/* Liste der Polls */}
-                <Stack spacing={3} sx={{ maxWidth: '800px', mx: 'auto' }}>
-                    {/* Ladeanzeige nur beim initialen Laden */}
-                    {isLoading && polls.length === 0 && <LinearProgress sx={{ width: '100%', mb: 2 }} />}
-
-                    {polls.length === 0 && !isLoading ? ( <Typography sx={{ textAlign: 'center', width: '100%', mt: 5 }} color="text.secondary"> Derzeit keine aktiven Abstimmungen vorhanden. </Typography> ) : (
-                        // ✅ Korrigierte Struktur für das Mapping
-                        polls.map((poll) => { // 'poll' ist hier korrekt definiert
-                            // Logik zur Bestimmung des Zustands für den aktuellen User
-                            const userCreatedThisPoll = poll.createdBy === user?.username;
-                            const hasVoted = typeof poll.userVoteOptionId === 'number';
-                            const canVote = !userCreatedThisPoll && !hasVoted;
-                            const canDelete = user?.role === 'Admin';
-
-                            // DEBUG: Logge die Werte VOR dem Rendern der Card
-                            // console.log(`Rendering Poll ID: ${poll.id}, Title: ${poll.title}, userVoteOptionId: ${poll.userVoteOptionId}, hasVoted: ${hasVoted}, canVote: ${canVote}`);
-
-                            return ( // ✅ Korrekte return-Anweisung
-                                <Card key={poll.id} elevation={3} sx={{ borderRadius: 3, width: '100%', transition: 'transform 0.2s ease-out, box-shadow 0.2s ease-out', '&:hover': { transform: 'translateY(-4px)', boxShadow: theme.shadows[6] } }}>
-                                    <CardHeader
-                                        title={<Typography variant="h6" fontWeight="medium">{poll.title}</Typography>}
-                                        subheader={`Erstellt von: ${poll.createdBy}`}
-                                        action={ canDelete ? ( <IconButton aria-label="delete poll" onClick={() => handleClickOpenDeleteDialog(poll)} color="error" size="small" disabled={isDeleting && pollToDelete?.id === poll.id} > <DeleteIcon /> </IconButton> ) : null }
-                                        sx={{ borderBottom: `1px solid ${theme.palette.divider}` }}
-                                    />
-                                    <CardContent>
-                                        {poll.description && <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>{poll.description}</Typography>}
-                                        {/* ✅ Korrekte Ternary-Operator-Struktur */}
-                                        {canVote ? (
-                                            // Optionen zum Abstimmen anzeigen
-                                            <FormControl component="fieldset" fullWidth disabled={votingPollId === poll.id}>
-                                                <RadioGroup aria-label={`Abstimmung ${poll.id}`} name={`poll-${poll.id}`} value={selectedVote[poll.id] || ''} onChange={(e) => handleVoteChange(poll.id, e.target.value)} >
-                                                    {poll.options.map(option => ( <FormControlLabel key={option.id} value={option.id} control={<Radio size="medium" icon={<RadioButtonUncheckedIcon />} checkedIcon={<RadioCheckedIcon />} />} label={option.text} sx={{ '& .MuiFormControlLabel-label': { flexGrow: 1 } }} /> ))}
-                                                </RadioGroup>
-                                            </FormControl>
-                                        ) : (
-                                            // Ergebnisse anzeigen
-                                            <Stack spacing={1.5}>
-                                                {poll.options.map(option => {
-                                                    const percentage = poll.totalVotes > 0 ? Math.round((option.votes / poll.totalVotes) * 100) : 0;
-                                                    const isUserVote = poll.userVoteOptionId === option.id;
-                                                    return (
-                                                        <Box key={option.id}>
-                                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
-                                                                <Typography variant="body1" sx={{ fontWeight: isUserVote ? 'bold' : 'normal' }}> {option.text} {isUserVote && <VotedIcon fontSize="small" color="success" sx={{ verticalAlign: 'text-bottom', ml: 0.5 }} />} </Typography>
-                                                                <Typography variant="body2" color="text.secondary">{option.votes} ({percentage}%)</Typography>
-                                                            </Box>
-                                                            <LinearProgress variant="determinate" value={percentage} sx={{ height: 10, borderRadius: 2 }} color={isUserVote ? "success" : "primary"} />
-                                                        </Box>
-                                                    );
-                                                })}
-                                                {userCreatedThisPoll && <Typography variant="caption" color="text.disabled" sx={{mt: 1, display: 'block', textAlign: 'right' }}>Du hast diese Abstimmung erstellt.</Typography>}
-                                                {hasVoted && !userCreatedThisPoll && <Typography variant="caption" color="text.disabled" sx={{mt: 1, display: 'block', textAlign: 'right'}}>Du hast bereits abgestimmt.</Typography>}
-                                            </Stack>
-                                        )}
-                                    </CardContent>
-                                    {/* ✅ Korrekte bedingte Anzeige für Button */}
-                                    {canVote && (
-                                        <CardActions sx={{ justifyContent: 'flex-end', p: 2, borderTop: `1px solid ${theme.palette.divider}`, bgcolor: alpha(theme.palette.grey[500], 0.05) }}>
-                                            <LoadingButton variant="contained" size="medium" onClick={() => handleVoteSubmit(poll.id)} disabled={!selectedVote[poll.id]} loading={votingPollId === poll.id} > Abstimmen </LoadingButton>
-                                        </CardActions>
-                                    )}
-                                </Card> // ✅ Korrektes Schließen der Card
-                            ); // ✅ Korrektes Schließen des return
-                        }) // ✅ Korrektes Schließen von .map()
+                            </Paper>
+                        </motion.div>
                     )}
-                </Stack> {/* Ende Poll List Stack */}
+                </AnimatePresence>
 
-                {/* Lösch-Bestätigungsdialog */}
-                <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description" >
-                    <DialogTitle id="alert-dialog-title">Abstimmung löschen?</DialogTitle>
-                    <DialogContent> <DialogContentText id="alert-dialog-description"> Möchtest du die Abstimmung "{pollToDelete?.title}" wirklich endgültig löschen? Alle zugehörigen Stimmen gehen dabei verloren. </DialogContentText> </DialogContent>
-                    <DialogActions> <Button onClick={handleCloseDeleteDialog} disabled={isDeleting}>Abbrechen</Button> <LoadingButton onClick={handleDeletePollConfirm} color="error" loading={isDeleting} autoFocus> Löschen </LoadingButton> </DialogActions>
+                <Box sx={{ maxWidth: '850px', mx: 'auto', width: '100%' }}>
+                    <AnimatePresence mode="wait">
+                        {isLoading && polls.length === 0 ? (
+                            <motion.div key="skeleton-polls" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+                                {renderPollSkeletons()}
+                            </motion.div>
+                        ) : (
+                            <motion.div key="content-polls" initial="hidden" animate="visible" exit={{ opacity: 0 }} variants={listContainerVariants}>
+                                {polls.length === 0 && !isLoading ? (
+                                    <Paper elevation={0} sx={{ p: {xs:3, sm:5}, textAlign: 'center', background: 'transparent', borderRadius: 4, mt: 3 }}>
+                                        <ResultsIcon sx={{fontSize: 60, color: alpha(theme.palette.text.secondary, 0.4), mb: 2}}/>
+                                        <Typography variant="h6" color="text.secondary" sx={{fontWeight: 500}}>{t('polls.noActivePolls')}</Typography>
+                                        <Typography variant="body2" color="text.disabled">{t('polls.noActivePollsHint')}</Typography>
+                                    </Paper>
+                                ) : (
+                                    <Stack spacing={3.5} component={motion.div} variants={listContainerVariants}>
+                                        {polls.map((poll) => {
+                                            const userCreatedThisPoll = poll.createdBy === user?.username;
+                                            const hasVoted = typeof poll.userVoteOptionId === 'number';
+                                            const canVote = !userCreatedThisPoll && !hasVoted;
+                                            const canDelete = user?.role === 'Admin';
+
+                                            return (
+                                                <motion.div key={poll.id} variants={listItemVariants}>
+                                                    <Card elevation={0} sx={{
+                                                        borderRadius: 4, width: '100%', overflow: 'hidden',
+                                                        border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+                                                        background: alpha(theme.palette.background.paper, theme.palette.mode === 'dark' ? 0.85 : 0.98),
+                                                        backdropFilter: theme.palette.mode === 'dark' ? 'blur(4px)' : 'none',
+                                                        transition: 'transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out',
+                                                        '&:hover': { transform: 'translateY(-5px) scale(1.005)', boxShadow: theme.shadows[7], borderColor: alpha(theme.palette.primary.main, 0.4) }
+                                                    }}>
+                                                        <CardHeader
+                                                            title={<Typography variant="h6" fontWeight={600} sx={{color: 'text.primary', lineHeight: 1.4}}>{poll.title}</Typography>}
+                                                            subheader={<Typography variant="caption" sx={{color: 'text.secondary'}}> {t('polls.createdByPrefix', { creator: poll.createdBy ?? 'Unbekannt' })} • {t('polls.totalVotes', {count: poll.totalVotes})}</Typography>}
+                                                            action={ canDelete ? (
+                                                                <Tooltip title={t('polls.deleteButtonAriaLabel')}>
+                                                                    <IconButton onClick={() => handleClickOpenDeleteDialog(poll)} color="inherit" size="medium" disabled={isDeleting && pollToDelete?.id === poll.id}
+                                                                                sx={{ color: alpha(theme.palette.text.secondary, 0.7), '&:hover': { color: theme.palette.error.main, background: alpha(theme.palette.error.main, 0.08) } }}>
+                                                                        <DeleteIcon />
+                                                                    </IconButton>
+                                                                </Tooltip>
+                                                            ) : null }
+                                                            sx={{ borderBottom: `1px solid ${alpha(theme.palette.divider, 0.15)}`, alignItems: 'flex-start', p: 2.5 }}
+                                                        />
+                                                        <CardContent sx={{ pt: 2.5, pb: canVote ? 1.5 : 3 }}>
+                                                            {poll.description && ( <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.6 }}>{poll.description}</Typography> )}
+                                                            {canVote ? (
+                                                                <FormControl component="fieldset" fullWidth disabled={votingPollId === poll.id}>
+                                                                    <RadioGroup aria-label={t('polls.voteAriaLabel', { pollId: poll.id })} name={`poll-${poll.id}`} value={selectedVote[poll.id] || ''} onChange={(e) => handleVoteChange(poll.id, e.target.value)}>
+                                                                        {poll.options.map((option: PollOption) => (
+                                                                            <FormControlLabel key={option.id} value={option.id}
+                                                                                              control={<Radio size="medium" icon={<RadioButtonUncheckedIcon />} checkedIcon={<RadioCheckedIcon color="primary"/>} sx={{p: 1.2}}/>}
+                                                                                              label={<Typography variant="body1" sx={{fontWeight: selectedVote[poll.id] === option.id ? 500 : 400}}>{option.text}</Typography>}
+                                                                                              sx={{ p: 0.8, borderRadius: 2, mb: 0.5, '&:hover': { bgcolor: alpha(theme.palette.action.hover, 0.4) }, transition: 'background-color 0.2s' }} />
+                                                                        ))}
+                                                                    </RadioGroup>
+                                                                </FormControl>
+                                                            ) : (
+                                                                <Stack spacing={2.5}>
+                                                                    {poll.options.map((option: PollOption) => {
+                                                                        const percentage = poll.totalVotes > 0 ? Math.round((option.votes / poll.totalVotes) * 100) : 0;
+                                                                        const isUserVote = poll.userVoteOptionId === option.id;
+                                                                        return (
+                                                                            <Box key={option.id}>
+                                                                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.8 }}>
+                                                                                    <Typography variant="body1" sx={{ fontWeight: isUserVote ? 600 : 500, color: isUserVote ? theme.palette.primary.main : 'text.primary' }}>
+                                                                                        {option.text}
+                                                                                        {isUserVote && <VotedIcon fontSize="inherit" color="inherit" sx={{ verticalAlign: 'middle', ml: 0.7, transform: 'translateY(-1px)'}} />}
+                                                                                    </Typography>
+                                                                                    <Typography variant="body2" sx={{ color: isUserVote ? theme.palette.primary.main : 'text.secondary', fontWeight: isUserVote ? 500 : 400 }}>{option.votes} ({percentage}%)</Typography>
+                                                                                </Box>
+                                                                                <LinearProgress variant="determinate" value={percentage} color={isUserVote ? "primary" : "inherit"}
+                                                                                                sx={{ height: 10, borderRadius: 2, bgcolor: alpha(theme.palette.grey[500], 0.18), '& .MuiLinearProgress-bar': { borderRadius: 2, transition: 'transform .4s linear' } }} />
+                                                                            </Box>
+                                                                        );
+                                                                    })}
+                                                                    {userCreatedThisPoll && <Typography variant="caption" color="text.disabled" sx={{mt: 1.5, display: 'block', textAlign: 'right' }}>{t('polls.youCreatedThis')}</Typography>}
+                                                                    {hasVoted && !userCreatedThisPoll && <Typography variant="caption" color="text.disabled" sx={{mt: 1.5, display: 'block', textAlign: 'right'}}>{t('polls.youAlreadyVoted')}</Typography>}
+                                                                </Stack>
+                                                            )}
+                                                        </CardContent>
+                                                        {canVote && (
+                                                            <CardActions sx={{ justifyContent: 'flex-end', p: 2, borderTop: `1px solid ${alpha(theme.palette.divider, 0.1)}`, bgcolor: alpha(theme.palette.action.hover, 0.2) }}>
+                                                                <LoadingButton variant="contained" size="medium" onClick={() => handleVoteSubmit(poll.id)}
+                                                                               disabled={!selectedVote[poll.id] || votingPollId === poll.id} loading={votingPollId === poll.id}
+                                                                               sx={{borderRadius: 2, px: 3, py: 1, fontWeight: 600}}>
+                                                                    {t('polls.voteButton')}
+                                                                </LoadingButton>
+                                                            </CardActions>
+                                                        )}
+                                                    </Card>
+                                                </motion.div>
+                                            );
+                                        })}
+                                    </Stack>
+                                )}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </Box>
+
+                <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog} PaperProps={{ sx: { borderRadius: 3.5, p:1, boxShadow: theme.shadows[5] } }} maxWidth="xs">
+                    <DialogTitle sx={{ fontWeight: 600, fontSize: '1.3rem', borderBottom: `1px solid ${alpha(theme.palette.divider, 0.15)}`, pb:1.5 }}>{t('polls.deleteDialogTitle')}</DialogTitle>
+                    <DialogContent sx={{pt: 2.5}}>
+                        <DialogContentText sx={{color: 'text.secondary', lineHeight: 1.6}}>
+                            {t('polls.deleteDialogContent', { pollTitle: pollToDelete?.title ?? 'dieser Abstimmung' })}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions sx={{ p: 2, pt: 1.5 }}>
+                        <Button onClick={handleCloseDeleteDialog} disabled={isDeleting} variant="text" sx={{borderRadius: 2, px:1.5, color: 'text.secondary'}}>{t('common.cancelButton')}</Button>
+                        <LoadingButton onClick={handleDeletePollConfirm} color="error" variant="contained" loading={isDeleting} autoFocus sx={{borderRadius: 2, px:2}}>{t('common.deleteButton')}</LoadingButton>
+                    </DialogActions>
                 </Dialog>
-
-            </Box> {/* Ende Main Content Box */}
-        </Box> // Ende Root Box
+            </Box>
+        </Box>
     );
 };
 

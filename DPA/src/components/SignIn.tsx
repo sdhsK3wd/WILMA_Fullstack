@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import axios from '../api/axiosInstance';
 import { useNavigate, Link as RouterLink, useLocation } from 'react-router-dom';
-import logo from '../images/Logo.png'; // Dein GWT Logo - Geht davon aus, dass 'images' relativ hier ist
-import API_BASE_URL from '../apiConfig';
-import type { AxiosError } from 'axios';
+import axios from '../api/axiosInstance';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import type { AxiosError } from 'axios';
+import API_BASE_URL from '../apiConfig';
+import type { User } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
-// --- MUI Imports ---
-// Grid wurde entfernt
 import {
     Box,
-    Card,
     Typography,
     TextField,
     Link,
@@ -19,199 +17,236 @@ import {
     InputAdornment,
     FormControl,
     InputLabel,
-    OutlinedInput,
-    // Grid, // Nicht mehr benötigt
+    FilledInput,
     useTheme,
-    useMediaQuery
+    Paper,
+    Stack,
+    CssBaseline,
+    // Avatar, // Nicht mehr benötigt, da Logo verwendet wird
+    alpha,
+    // Divider // Nicht verwendet im Code
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Login as LoginIcon } from '@mui/icons-material';
 
-// --- Framer Motion Import ---
-import { motion } from 'framer-motion';
-
-// --- HINTERGRUNDBILDER ---
-// Importiere die Bilder direkt - Passe die Pfade an, falls dein 'images'-Ordner woanders liegt!
-import bgImage1 from '../images/sign-in-image-1.jpg'; // Stimmt "sing-in..."? Oder "sign-in..."? Oder ganz anders?
-import bgImage2 from '../images/sign-in-image-2.jpg'; // Stimmt dieser Name exakt?
-import bgImage3 from '../images/sign-in-image-3.jpg'; // Stimmt dieser Name exakt?
-
-// Verwende die importierten Variablen im Array
-const backgroundImages = [bgImage1, bgImage2, bgImage3];
-// --- ENDE HINTERGRUNDBILDER ---
+import logo from '../images/Logo.png'; // Importiere dein Logo
 
 const SignIn: React.FC = () => {
-    // --- States ---
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
-    // --- Hooks ---
     const navigate = useNavigate();
     const location = useLocation();
     const { login, isAuthenticated } = useAuth();
     const theme = useTheme();
-    const isMdUp = useMediaQuery(theme.breakpoints.up('md'));
+    const { t } = useTranslation();
 
-    // --- Effekte ---
-    // Timer für Hintergrundwechsel
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            setCurrentBgIndex((prevIndex) => (prevIndex + 1) % backgroundImages.length);
-        }, 5000);
-        return () => clearInterval(intervalId);
-    }, []);
-
-    // Redirect wenn bereits eingeloggt
-    useEffect(() => {
-        if (isAuthenticated && location.pathname === "/login") {
+        if (isAuthenticated && (location.pathname === "/login" || location.pathname === "/")) {
             navigate("/home", { replace: true });
         }
     }, [isAuthenticated, navigate, location.pathname]);
 
-    // --- Handler ---
     const handleLogin = async () => {
         if (!email || !password) {
-            toast.error("Bitte fülle alle Felder aus!");
+            toast.error(t("signIn.toast.fieldsRequired"));
             return;
         }
         setLoading(true);
         try {
             const response = await axios.post(`${API_BASE_URL}/users/login`, { email, password });
-            const updatedUser = { /* ...deine User-Daten... */
-                id: response.data.id, username: response.data.username, email: response.data.email,
-                role: response.data.role, phoneNumber: response.data.phoneNumber, location: response.data.location,
-                profileImageUrl: response.data.profileImageUrl, token: response.data.token, refreshToken: response.data.refreshToken
-            };
-            login(updatedUser);
-            toast.success("Login erfolgreich!");
+            const loggedInUser: User = response.data;
+            login(loggedInUser);
+            toast.success(t("signIn.toast.loginSuccess"));
             navigate("/home", { replace: true });
         } catch (error) {
             const err = error as AxiosError<{ message?: string }>;
-            toast.error(err.response?.data?.message || "Login fehlgeschlagen");
+            console.error("Login Error:", err.response?.data || err.message);
+            toast.error(err.response?.data?.message || t("signIn.toast.loginErrorGeneric"));
         } finally {
             setLoading(false);
         }
     };
+
     const handleClickShowPassword = () => setShowPassword((show) => !show);
-    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => { event.preventDefault(); };
-    // --- Ende Handler ---
+    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+    };
+
+    // Hilfsfunktion für Autofill-Styles, um Wiederholungen zu vermeiden
+    // Die Hintergrundfarbe hier ist der Standard für FilledInput in MUI
+    // theme.palette.mode === 'dark' ? alpha(theme.palette.common.white, 0.09) : alpha(theme.palette.common.black, 0.06)
+    // Passe dies an, falls deine FilledInputs eine andere benutzerdefinierte Hintergrundfarbe haben.
+    const getAutofillStyles = (themeInstance: typeof theme) => ({
+        WebkitBoxShadow: `0 0 0 100px ${
+            themeInstance.palette.mode === 'dark'
+                ? alpha(themeInstance.palette.common.white, 0.09) // Standard MUI FilledInput Hintergrund (dunkel)
+                : alpha(themeInstance.palette.common.black, 0.06) // Standard MUI FilledInput Hintergrund (hell)
+        } inset !important`,
+        WebkitTextFillColor: `${themeInstance.palette.text.primary} !important`,
+        caretColor: `${themeInstance.palette.text.primary} !important`,
+        borderRadius: 'inherit !important', // Nimmt den Radius des Elternelements (des Inputs)
+        transition: 'background-color 5000s ease-in-out 0s', // Verhindert die Browser-Standard-Transition
+    });
+
+    const autofillStyles = getAutofillStyles(theme);
 
 
     return (
-        // Äußerer Container für Seite und Hintergrund-Layer
         <Box
             sx={{
-                position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                minHeight: '100vh', overflow: 'hidden', padding: 2,
+                display: 'flex',
+                minHeight: '100vh',
+                alignItems: 'center',
+                justifyContent: 'center',
+                bgcolor: theme.palette.mode === 'dark' ? theme.palette.grey[900] : theme.palette.grey[100],
+                p: 3,
             }}
         >
-            {/* --- Hintergrund-Slideshow Layer (unverändert) --- */}
-            {backgroundImages.map((imgUrl, index) => (
-                <Box
-                    key={index}
-                    sx={{
-                        position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                        backgroundImage: `url(${imgUrl})`, // Nutzt jetzt importierte Variable
-                        backgroundSize: 'cover', backgroundPosition: 'center',
-                        zIndex: -1, opacity: index === currentBgIndex ? 1 : 0,
-                        transition: 'opacity 1.2s ease-in-out',
-                    }}
-                />
-            ))}
-            {/* --- Ende Slideshow Layer --- */}
-
-
-            {/* Login Card (mit motion.div) */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: "easeOut" }} style={{zIndex: 1}}
+            <CssBaseline />
+            <Paper
+                elevation={0}
+                variant="outlined"
+                sx={{
+                    p: { xs: 3, sm: 5 },
+                    width: '100%',
+                    maxWidth: '500px',
+                    borderRadius: 4, // Entspricht theme.shape.borderRadius * 1 bei Standardtheme (4px)
+                    borderColor: alpha(theme.palette.divider, 0.3),
+                    bgcolor: theme.palette.mode === 'dark' ? alpha(theme.palette.background.paper, 0.75) : 'background.paper',
+                    backdropFilter: theme.palette.mode === 'dark' ? 'blur(16px)' : 'none',
+                    border: theme.palette.mode === 'dark'
+                        ? `1px solid ${alpha(theme.palette.grey[700], 0.3)}`
+                        : `1px solid ${alpha(theme.palette.grey[300], 0.7)}`,
+                    transition: 'border-color 0.3s ease',
+                    '&:hover': {
+                        borderColor: theme.palette.mode === 'dark'
+                            ? alpha(theme.palette.grey[600], 0.5)
+                            : alpha(theme.palette.grey[400], 0.9),
+                    }
+                }}
             >
-                <Card
-                    elevation={8}
-                    sx={{
-                        maxWidth: 900, width: '100%', borderRadius: 4, overflow: 'hidden',
-                        // Wichtig: display: 'flex' wird jetzt HIER gesetzt für die Spalten
-                        display: 'flex',
-                        flexDirection: { xs: 'column', md: 'row' }, // Spalten auf Desktop, Zeilen auf Mobile
-                        backgroundColor: 'background.paper',
-                    }}
-                >
-                    {/* --- Grid wurde durch Box ersetzt --- */}
-                    {/* Linke Spalte (Branding) als Box */}
-                    <Box
-                        sx={{
-                            display: { xs: 'none', md: 'flex' }, // Nur auf Desktop sichtbar
-                            flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-                            padding: 6, color: theme.palette.primary.dark,
-                            width: { md: '40%' }, // Breite der linken Spalte (anpassen nach Bedarf)
-                            // Statt 'md={5}' (was ~41.6% war)
-                        }}
-                    >
-                        <motion.div whileHover={{ scale: 1.05 }} transition={{ type: "spring", stiffness: 300 }}>
-                            <Box component="img" src={logo} alt="GWT Logo" sx={{ width: 150, height: 'auto', marginBottom: 3 }} />
-                        </motion.div>
-                        <Typography variant="h6" component="p" align="center" sx={{ mb: 1 }}>
-                            Wasserversorgungstechnik
-                        </Typography>
-                        <Typography variant="body2" align="center" sx={{ opacity: 0.8 }}>
-                            Ihr Partner für klares Wasser.
-                        </Typography>
-                    </Box>
+                <Stack spacing={3} alignItems="center">
+                    <img
+                        src={logo}
+                        alt="GWT Logo"
+                        style={{ width: 140, height: 'auto', marginBottom: theme.spacing(1) }}
+                    />
 
-                    {/* --- Grid wurde durch Box ersetzt --- */}
-                    {/* Rechte Spalte (Formular) als Box */}
-                    <Box
-                        sx={{
-                            display: 'flex', flexDirection: 'column', justifyContent: 'center',
-                            padding: { xs: 3, sm: 4, md: 6 },
-                            width: { xs: '100%', md: '60%' }, // Breite der rechten Spalte
-                            // Statt 'md={7}' (was ~58.3% war)
-                        }}
-                    >
-                        {/* Logo für mobile Ansicht */}
-                        <Box component="img" src={logo} alt="GWT Logo" sx={{ width: 80, height: 'auto', mb: 2, alignSelf: 'center', display: { xs: 'block', md: 'none' } }} />
+                    <Typography component="h1" variant="h5" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
+                        {t('signIn.welcomeTitle')}
+                    </Typography>
+                    <Typography component="p" variant="body2" sx={{ color: 'text.secondary', textAlign: 'center', mt: -2, mb: 1 }}>
+                        {t('signIn.subtitle')}
+                    </Typography>
 
-                        <Typography component="h1" variant="h4" sx={{ mb: 3, fontWeight: 'bold', textAlign: 'center' }}>
-                            Willkommen zurück!
-                        </Typography>
-
-                        {/* Formular */}
-                        <Box component="form" onSubmit={(e) => { e.preventDefault(); handleLogin(); }} sx={{ width: '100%' }}>
-                            <TextField /* ...props... */
-                                margin="normal" required fullWidth id="email" label="Email Addresse" name="email"
-                                autoComplete="email" autoFocus={!isMdUp} value={email}
-                                onChange={(e) => setEmail(e.target.value)} disabled={loading}
-                                sx={{ '& .MuiOutlinedInput-root': { '&:hover fieldset': { borderColor: theme.palette.primary.light, }, '&.Mui-focused fieldset': { borderColor: theme.palette.primary.main, }, }, }}
+                    <Box component="form" onSubmit={(e) => { e.preventDefault(); handleLogin(); }} sx={{ width: '100%', mt: 1 }}>
+                        <Stack spacing={3}>
+                            <TextField
+                                fullWidth
+                                required
+                                id="email"
+                                label={t('signIn.emailLabel')}
+                                name="email"
+                                type="email"
+                                autoComplete="email"
+                                autoFocus
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                disabled={loading}
+                                variant="filled"
+                                InputProps={{ disableUnderline: true }}
+                                InputLabelProps={{ required: false }}
+                                sx={{
+                                    '.MuiFilledInput-root': {
+                                        borderRadius: 2, // Dein ursprünglicher Radius
+                                        // Wichtig: Styles für das eigentliche <input>-Element innerhalb von MuiFilledInput-root
+                                        '& input:-webkit-autofill': autofillStyles,
+                                        '& input:-webkit-autofill:hover': autofillStyles,
+                                        '& input:-webkit-autofill:focus': autofillStyles,
+                                        '& input:-webkit-autofill:active': autofillStyles,
+                                    },
+                                }}
                             />
-                            <FormControl margin="normal" required fullWidth variant="outlined" disabled={loading}>
-                                <InputLabel htmlFor="outlined-adornment-password">Passwort</InputLabel>
-                                <OutlinedInput /* ...props... */
-                                    id="outlined-adornment-password" type={showPassword ? 'text' : 'password'} value={password}
+                            <FormControl
+                                fullWidth
+                                required
+                                variant="filled"
+                                disabled={loading}
+                                sx={{
+                                    '.MuiFilledInput-root': {
+                                        borderRadius: 2, // Dein ursprünglicher Radius
+                                        // Wichtig: Styles für das eigentliche <input>-Element innerhalb von MuiFilledInput-root
+                                        '& input:-webkit-autofill': autofillStyles,
+                                        '& input:-webkit-autofill:hover': autofillStyles,
+                                        '& input:-webkit-autofill:focus': autofillStyles,
+                                        '& input:-webkit-autofill:active': autofillStyles,
+                                    },
+                                }}
+                            >
+                                <InputLabel htmlFor="login-password" required={false}>
+                                    {t('signIn.passwordLabel')}
+                                </InputLabel>
+                                <FilledInput
+                                    id="login-password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    endAdornment={ <InputAdornment position="end"> <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword} edge="end"> {showPassword ? <VisibilityOff /> : <Visibility />} </IconButton> </InputAdornment> }
-                                    label="Passwort"
-                                    sx={{ '&:hover fieldset': { borderColor: theme.palette.primary.light, }, '&.Mui-focused fieldset': { borderColor: theme.palette.primary.main, }, }}
+                                    autoComplete="current-password"
+                                    disableUnderline={true}
+                                    endAdornment={(
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label={t('signIn.password.toggleVisibilityAriaLabel')}
+                                                onClick={handleClickShowPassword}
+                                                onMouseDown={handleMouseDownPassword}
+                                                edge="end"
+                                                sx={{
+                                                    backgroundColor: 'transparent !important',
+                                                    '&:hover': { backgroundColor: 'action.hover' }
+                                                }}
+                                            >
+                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )}
                                 />
                             </FormControl>
-                            <LoadingButton /* ...props... */
-                                type="submit" fullWidth variant="contained" color="primary" loading={loading}
-                                sx={{ mt: 4, mb: 2, py: 1.5, fontSize: '1rem', fontWeight: 'bold', borderRadius: 2, transition: 'transform 0.2s ease-out, box-shadow 0.2s ease-out', '&:hover': { transform: 'scale(1.03)', boxShadow: theme.shadows[4], } }}
+
+                            <LoadingButton
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                size="large"
+                                loading={loading}
+                                startIcon={<LoginIcon />}
+                                sx={{
+                                    py: 1.5,
+                                    fontWeight: 'bold',
+                                    borderRadius: 2,
+                                    boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.25)}`,
+                                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                                    '&:hover': {
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: `0 8px 25px ${alpha(theme.palette.primary.main, 0.35)}`,
+                                    }
+                                }}
                             >
-                                Login
+                                {t('signIn.submitButton')}
                             </LoadingButton>
-                            <Box sx={{ textAlign: 'center', mt: 2 }}>
-                                <Link component={RouterLink} to="/forgot-password" variant="body2" sx={{ fontWeight: 'medium' }}>
-                                    Passwort vergessen?
+                            <Box sx={{ textAlign: 'center', pt: 1 }}>
+                                <Link component={RouterLink} to="/forgot-password" variant="body2" sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}>
+                                    {t('signIn.forgotPasswordLink')}
                                 </Link>
                             </Box>
-                        </Box> {/* Ende Formular Box */}
-                    </Box> {/* Ende Rechte Spalte Box */}
-                </Card> {/* Ende Card */}
-            </motion.div> {/* Ende motion.div */}
-        </Box> // Ende äußerer Container
+                        </Stack>
+                    </Box>
+                </Stack>
+            </Paper>
+        </Box>
     );
 };
 

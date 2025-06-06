@@ -1,199 +1,154 @@
+# src/prophet_model.py
 import pandas as pd
 import numpy as np
 import os
-import datetime
+import sys
+import traceback
 from prophet import Prophet
-import matplotlib.pyplot as plt
+from src import config
+from typing import Tuple, Dict, Any # Für Typ-Annotationen
 
-# --- Configuration (Wird teilweise nicht mehr direkt in der Funktion verwendet) ---
-# INPUT_FILENAME = "data/synthetic/synthetic_data_predictable_3y.csv" # Wird nicht mehr hier gebraucht
-# TRAIN_END_DATE = "2025-03-31" # Wird nicht mehr hier gebraucht
-# FORECAST_DAYS = 30 # Wird jetzt als Argument übergeben
-RESULTS_DIR = "results"
-FIGURES_DIR = os.path.join(RESULTS_DIR, "figures")
+# Placeholder for holidays DataFrame (wie in der vorherigen Antwort)
+holidays_df = None
 
-# Parameters from the generation script (könnten für Validierung nützlich sein)
-MIN_VALUE = 50
-MAX_VALUE = 1000
-BASE_LEVEL = 450
-TREND_SLOPE = 0.05
-YEARLY_AMP = 200
-WEEKLY_AMP = 100
 
-# --- Helper to generate ground truth (bleibt unverändert) ---
-def generate_ground_truth(start_date_str, end_date_str):
-    """Generates ground truth data for comparison, WITHOUT noise."""
-    start_date = pd.to_datetime(start_date_str)
-    end_date = pd.to_datetime(end_date_str)
-    dates = pd.date_range(start=start_date, end=end_date, freq='D')
-    num_days = len(dates)
-
-    original_start_date = pd.to_datetime("2022-03-31") # Start date of the 3y file
-    days_elapsed = (dates - original_start_date).days
-
-    day_of_year = dates.dayofyear
-    day_of_week = dates.dayofweek
-
-    trend = TREND_SLOPE * days_elapsed
-    yearly = YEARLY_AMP * np.cos(2 * np.pi * (day_of_year - 180) / 365.25)
-    weekly = WEEKLY_AMP * np.cos(2 * np.pi * (day_of_week - 2.5) / 7)
-
-    true_values = BASE_LEVEL + trend + yearly + weekly
-    true_values = np.clip(true_values, MIN_VALUE, MAX_VALUE)
-
-    df_true = pd.DataFrame({'Date': dates, 'Actual': true_values})
-    df_true['Actual'] = df_true['Actual'].round(2)
-    df_true.set_index('Date', inplace=True)
-
-    return df_true
-
-# --- Funktion für FastAPI Integration (KORRIGIERT) ---
-# ✅ Akzeptiert jetzt 'history_df' und 'periods' als Argumente
-def forecast_with_prophet(history_df, periods):
-    """
-    Nimmt ein DataFrame mit Spalten 'ds' (datetime) und 'y' (numeric)
-    und macht eine Vorhersage für die angegebene Anzahl von 'periods' Tagen.
-    Gibt ein DataFrame mit 'ds' und 'yhat' (und optional anderen Spalten) zurück.
-    """
-    print(f"INFO (prophet_model): Starte Prophet Forecast für {periods} Perioden.")
-    print(f"INFO (prophet_model): Trainingsdaten Info:")
-    history_df.info() # Zeige Info der übergebenen Daten
-    print(history_df.head())
-    print(history_df.tail())
-
+def forecast_with_prophet(history_df: pd.DataFrame, periods: int, extra_regressors_df: pd.DataFrame = None) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+    print(f"INFO (prophet_model): Starting Prophet Forecast for {periods} periods.")
 
     if history_df.empty:
-        raise ValueError("Leeres DataFrame als Trainingsdaten übergeben.")
-    if 'ds' not in history_df.columns or 'y' not in history_df.columns:
-         raise ValueError("Trainings-DataFrame muss Spalten 'ds' und 'y' enthalten.")
+        raise ValueError("Prophet: Empty DataFrame provided for training data.")
+    required_cols = ['ds', 'y']
+    for col in required_cols:
+        if col not in history_df.columns:
+            raise ValueError(f"Prophet: Training DataFrame must contain column '{col}'.")
+
     if not pd.api.types.is_datetime64_any_dtype(history_df['ds']):
-         raise ValueError("Spalte 'ds' im Trainings-DataFrame muss vom Typ datetime sein.")
-    if not pd.api.types.is_numeric_dtype(history_df['y']):
-         raise ValueError("Spalte 'y' im Trainings-DataFrame muss numerisch sein.")
+         history_df['ds'] = pd.to_datetime(history_df['ds'], errors='coerce')
+         if history_df['ds'].isnull().any():
+             raise ValueError("Prophet: Could not reliably convert 'ds' column to datetime.")
 
+    history_df_prophet = history_df.copy()
+    if history_df_prophet['ds'].dt.tz is not None:
+        print("INFO (prophet_model): Removing timezone from 'ds' for Prophet.")
+        history_df_prophet['ds'] = history_df_prophet['ds'].dt.tz_localize(None)
 
-    # Initialisiere und trainiere das Prophet-Modell
-    # Passe die Prophet-Parameter bei Bedarf an
-    model = Prophet(daily_seasonality=False) # Behalte deine Einstellung bei
-    print("INFO (prophet_model): Fitting model...")
-    model.fit(history_df)
+    if not pd.api.types.is_numeric_dtype(history_df_prophet['y']):
+         history_df_prophet['y'] = pd.to_numeric(history_df_prophet['y'], errors='coerce')
+
+    if history_df_prophet['y'].isnull().any():
+        print(f"WARNING (prophet_model): Column 'y' contains {history_df_prophet['y'].isnull().sum()} NaN values. Prophet will ignore these rows during training.")
+
+    if len(history_df_prophet.dropna(subset=['y'])) < 2:
+        raise ValueError(f"Prophet: Not enough valid (non-NaN) training data points ({len(history_df_prophet.dropna(subset=['y']))} rows). At least 2 are required.")
+
+    print("INFO (prophet_model): Initializing Prophet model with parameters from config.py...")
+    model = Prophet(
+        changepoint_prior_scale=config.PROPHET_CHANGEPOINT_PRIOR,
+        seasonality_prior_scale=config.PROPHET_SEASONALITY_PRIOR,
+        daily_seasonality=config.PROPHET_DAILY_SEASONALITY,
+        weekly_seasonality='auto',
+        yearly_seasonality='auto',
+        seasonality_mode=config.PROPHET_SEASONALITY_MODE,
+        holidays=holidays_df
+    )
+
+    potential_regressors_in_history = [
+        col for col in history_df_prophet.columns if col not in ['ds', 'y', 'cap', 'floor']
+    ]
+    actual_regressors_for_model = []
+    extra_regressors_df_prepared = None
+
+    if extra_regressors_df is not None and not extra_regressors_df.empty:
+        extra_regressors_df_prepared = extra_regressors_df.copy()
+        if 'ds' not in extra_regressors_df_prepared.columns and isinstance(extra_regressors_df_prepared.index, pd.DatetimeIndex):
+            extra_regressors_df_prepared = extra_regressors_df_prepared.reset_index()
+
+        if 'ds' not in extra_regressors_df_prepared.columns:
+             raise ValueError("Prophet: extra_regressors_df must have a 'ds' column or a DatetimeIndex.")
+
+        if not pd.api.types.is_datetime64_any_dtype(extra_regressors_df_prepared['ds']):
+            extra_regressors_df_prepared['ds'] = pd.to_datetime(extra_regressors_df_prepared['ds'], errors='coerce')
+        if extra_regressors_df_prepared['ds'].dt.tz is not None:
+            extra_regressors_df_prepared['ds'] = extra_regressors_df_prepared['ds'].dt.tz_localize(None)
+
+        for regressor_name in potential_regressors_in_history:
+            if regressor_name in extra_regressors_df_prepared.columns:
+                if not pd.api.types.is_numeric_dtype(history_df_prophet[regressor_name]):
+                    history_df_prophet[regressor_name] = pd.to_numeric(history_df_prophet[regressor_name], errors='coerce')
+                if not pd.api.types.is_numeric_dtype(extra_regressors_df_prepared[regressor_name]):
+                    extra_regressors_df_prepared[regressor_name] = pd.to_numeric(extra_regressors_df_prepared[regressor_name], errors='coerce')
+
+                history_df_prophet[regressor_name] = history_df_prophet[regressor_name].ffill().bfill().fillna(0)
+                extra_regressors_df_prepared[regressor_name] = extra_regressors_df_prepared[regressor_name].ffill().bfill().fillna(0)
+
+                try:
+                    model.add_regressor(regressor_name)
+                    actual_regressors_for_model.append(regressor_name)
+                    print(f"INFO (prophet_model): Regressor '{regressor_name}' added.")
+                except Exception as e_reg:
+                    print(f"WARNING (prophet_model): Error adding regressor '{regressor_name}': {e_reg}. Skipping.")
+
+    print("INFO (prophet_model): Fitting Prophet model...")
+    try:
+        # Prophet doesn't return a direct 'loss' like Keras during fit
+        model.fit(history_df_prophet)
+        training_loss_info = "N/A (Prophet does not expose direct training loss like Keras)"
+    except Exception as fit_err:
+        print(f"ERROR (prophet_model): Error during Prophet model.fit(): {fit_err}")
+        traceback.print_exc()
+        raise ValueError(f"Prophet model.fit() failed: {fit_err}")
     print("INFO (prophet_model): Fitting complete.")
 
-    # Erstelle das Future-DataFrame für die Vorhersage
-    print(f"INFO (prophet_model): Erstelle Future DataFrame für {periods} Perioden...")
-    # Wichtig: Verwende das übergebene 'periods'-Argument
+    model_training_report = {
+        "changepoint_prior_scale_used": model.changepoint_prior_scale,
+        "seasonality_prior_scale_used": model.seasonality_prior_scale,
+        "seasonality_mode_used": model.seasonality_mode,
+        "holidays_prior_scale_used": model.holidays_prior_scale if model.holidays is not None else None,
+        "detected_changepoints_count": len(model.changepoints),
+        "active_seasonalities": list(model.seasonalities.keys()),
+        "active_regressors": actual_regressors_for_model,
+        "daily_seasonality_setting": config.PROPHET_DAILY_SEASONALITY,
+        "training_loss": training_loss_info, # Placeholder
+        "validation_loss": None # Not applicable for Prophet's direct fit method
+    }
+    if holidays_df is not None:
+        model_training_report["holidays_configured_count"] = len(holidays_df)
+    else:
+        model_training_report["holidays_configured_count"] = 0
+
+    print(f"INFO (prophet_model): Creating future DataFrame for {periods} periods...")
     future_df = model.make_future_dataframe(periods=periods, freq='D')
-    print(f"INFO (prophet_model): Future DataFrame erstellt (letztes Datum: {future_df['ds'].iloc[-1]})")
 
+    if actual_regressors_for_model and extra_regressors_df_prepared is not None:
+        columns_to_select_from_extra = ['ds'] + [
+            reg for reg in actual_regressors_for_model if reg in extra_regressors_df_prepared.columns
+        ]
+        if len(columns_to_select_from_extra) > 1:
+            future_df = pd.merge(future_df, extra_regressors_df_prepared[columns_to_select_from_extra], on='ds', how='left')
+            for regressor in actual_regressors_for_model:
+                if regressor in future_df.columns and future_df[regressor].isnull().any():
+                    print(f"WARNING (prophet_model): Missing future values for regressor '{regressor}' after merge. Filling with ffill, bfill, then 0.")
+                    future_df[regressor] = future_df[regressor].ffill().bfill().fillna(0)
+                elif regressor not in future_df.columns:
+                    print(f"ERROR (prophet_model): Regressor '{regressor}' added to model but not found in future_df after merge. Setting to 0 for forecast.")
+                    future_df[regressor] = 0
+    elif actual_regressors_for_model and extra_regressors_df_prepared is None:
+         print(f"ERROR (prophet_model): Regressors {actual_regressors_for_model} were added to the model, but no extra_regressors_df_prepared was available for the future.")
+         for regressor in actual_regressors_for_model:
+             if regressor not in future_df.columns:
+                future_df[regressor] = 0
 
-    # Generiere die Vorhersage
     print("INFO (prophet_model): Generating forecast...")
-    forecast_df = model.predict(future_df)
+    try:
+        forecast_df_output = model.predict(future_df)
+    except Exception as pred_err:
+        print(f"ERROR (prophet_model): Error during Prophet model.predict(): {pred_err}")
+        traceback.print_exc()
+        raise ValueError(f"Prophet model.predict() failed: {pred_err}. Check regressors in future_df.")
+
     print("INFO (prophet_model): Forecast complete.")
 
-    # Gib das gesamte Forecast-DataFrame zurück (main.py filtert dann nach Datum)
-    # Enthält Spalten wie 'ds', 'yhat', 'yhat_lower', 'yhat_upper' etc.
-    return forecast_df
+    output_columns = ['ds', 'yhat', 'yhat_lower', 'yhat_upper', 'trend']
+    final_forecast_df = forecast_df_output[[col for col in output_columns if col in forecast_df_output.columns]].copy()
 
-# --- Haupt-Skript (bleibt für lokale Tests, wird von FastAPI nicht direkt genutzt) ---
-if __name__ == "__main__":
-    print("--- Running Prophet Forecasting (Local Test Script) ---")
-    # Dieser Teil wird nur ausgeführt, wenn du `python src/prophet_model.py` direkt startest.
-    # Er ist NICHT Teil der FastAPI-Anwendung.
-    INPUT_FILENAME_LOCAL = "../data/synthetic/synthetic_data_predictable_3y.csv" # Pfad relativ zu prophet_model.py
-    TRAIN_END_DATE_LOCAL = "2024-12-31" # Angepasst an unsere Logik
-    FORECAST_DAYS_LOCAL = 30
-
-    os.makedirs(RESULTS_DIR, exist_ok=True)
-    os.makedirs(FIGURES_DIR, exist_ok=True)
-
-    try:
-        df = pd.read_csv(INPUT_FILENAME_LOCAL, sep=';')
-        # Konvertiere Datum und benenne um für Prophet
-        df['ds'] = pd.to_datetime(df['Date'])
-        df = df.rename(columns={'Value': 'y'})[['ds', 'y']]
-        print(f"Loaded data shape: {df.shape}")
-    except FileNotFoundError:
-        print(f"Error: Input file not found at {INPUT_FILENAME_LOCAL}")
-        exit()
-
-    # Filtere Trainingsdaten
-    df_train = df[df['ds'] <= TRAIN_END_DATE_LOCAL]
-    print(f"Training data shape: {df_train.shape}")
-
-    if df_train.empty:
-        print("Error: No training data found before or on the end date.")
-        exit()
-
-    try:
-        # Rufe die Funktion mit den lokalen Daten und Tagen auf
-        full_forecast_df = forecast_with_prophet(df_train, periods=FORECAST_DAYS_LOCAL)
-
-        # --- Auswertung und Plots (wie vorher, aber mit full_forecast_df) ---
-        forecast_start_date = pd.to_datetime(TRAIN_END_DATE_LOCAL) + pd.Timedelta(days=1)
-        forecast_end_date = forecast_start_date + pd.Timedelta(days=FORECAST_DAYS_LOCAL - 1)
-
-        # Filtere den relevanten Forecast-Zeitraum
-        comparison_forecast = full_forecast_df[
-            (full_forecast_df['ds'] >= forecast_start_date) &
-            (full_forecast_df['ds'] <= forecast_end_date)
-        ][['ds', 'yhat', 'yhat_lower', 'yhat_upper']] # Behalte relevante Spalten
-        comparison_forecast = comparison_forecast.rename(columns={'yhat': 'Prophet_Forecast'})
-
-        # Generiere Ground Truth für den Vergleichszeitraum
-        comparison_actual = generate_ground_truth(forecast_start_date.strftime('%Y-%m-%d'), forecast_end_date.strftime('%Y-%m-%d'))
-
-        # Verbinde Actual und Forecast für den Vergleich
-        comparison_df = comparison_actual.join(comparison_forecast.set_index('ds'))
-
-        # Speichere Vergleichs-CSV
-        output_filename = f"prophet_forecast_vs_actual_{FORECAST_DAYS_LOCAL}d_LOCAL.csv"
-        output_path = os.path.join(RESULTS_DIR, output_filename)
-        comparison_df.to_csv(output_path, sep=';')
-        print(f"Comparison results saved to {output_path}")
-
-        # --- Plots erstellen ---
-        print("Generating plots...")
-        try:
-            # Plot 1: Gesamter Forecast (Historie + Zukunft)
-            fig1 = model.plot(full_forecast_df) # Verwende das von der Funktion zurückgegebene DataFrame
-            plt.title("Prophet Forecast (History + Future)")
-            plot1_path = os.path.join(FIGURES_DIR, "prophet_full_forecast_LOCAL.png")
-            plt.savefig(plot1_path)
-            plt.close(fig1)
-            print(f"Full forecast plot saved to {plot1_path}")
-
-            # Plot 2: Komponenten
-            fig2 = model.plot_components(full_forecast_df)
-            plt.suptitle("Prophet Components")
-            plot2_path = os.path.join(FIGURES_DIR, "prophet_components_LOCAL.png")
-            plt.savefig(plot2_path)
-            plt.close(fig2)
-            print(f"Components plot saved to {plot2_path}")
-
-             # Plot 3: Vergleich Actual vs Forecast für den Forecast-Zeitraum
-            plt.figure(figsize=(12, 6))
-            plt.plot(comparison_df.index, comparison_df['Actual'], label='Actual (Generated)', color='red', linewidth=2)
-            plt.plot(comparison_df.index, comparison_df['Prophet_Forecast'], label='Prophet Forecast', color='blue', linestyle='--')
-            # Optional: Unsicherheitsintervall plotten
-            # plt.fill_between(comparison_df.index, comparison_df['yhat_lower'], comparison_df['yhat_upper'], color='blue', alpha=0.2, label='Uncertainty Interval')
-            plt.title(f'Prophet Forecast vs Actual for {FORECAST_DAYS_LOCAL} days starting {forecast_start_date.strftime("%Y-%m-%d")}')
-            plt.xlabel('Date')
-            plt.ylabel('Value')
-            plt.legend()
-            plt.grid(True)
-            plot3_path = os.path.join(FIGURES_DIR, "prophet_comparison_LOCAL.png")
-            plt.savefig(plot3_path)
-            plt.close()
-            print(f"Comparison plot saved to {plot3_path}")
-
-        except Exception as e:
-            print(f"An error occurred during plotting: {e}")
-
-    except ValueError as ve:
-        print(f"Error during forecasting: {ve}")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        traceback.print_exc()
-
-    print("--- Prophet local script finished ---")
+    return final_forecast_df, model_training_report

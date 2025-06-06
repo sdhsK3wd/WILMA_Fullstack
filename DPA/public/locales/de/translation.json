@@ -1,0 +1,479 @@
+{
+  "settingsTitle": "Einstellungen",
+  "darkMode": "Dunkelmodus",
+  "language": "Sprache",
+  "themeDesc": "Wechseln Sie zwischen hellem und dunklem Design.",
+  "langDesc": "Wählen Sie Ihre bevorzugte Sprache.",
+  "common": {
+    "home": "Startseite",
+    "accessDenied": "Zugriff verweigert.",
+    "notSpecified": "Nicht angegeben",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "add": "Hinzufügen",
+    "deleteButton": "Löschen",
+    "authTokenMissingToast": "Authentifizierung erforderlich.",
+    "incompleteUserDataToast": "Unvollständige Benutzerdaten für Kontext-Update.",
+    "sessionInvalidToast": "Sitzung ungültig.",
+    "userDataNotLoadedToast": "Benutzerdaten nicht vollständig geladen.",
+    "yes": "Ja",
+    "no": "Nein",
+    "none": "Keine"
+  },
+  "navbar": {
+    "profileSettings": "Einstellungen",
+    "myProfile": "Mein Profil",
+    "profileTitle": "Profil",
+    "userList": "Benutzerliste",
+    "createUser": "Benutzer erstellen",
+    "userManagementTitle": "Benutzerverwaltung",
+    "forecastAnalyse": "Analyse",
+    "forecastStatus": "Status / Warnungen",
+    "forecastTitle": "Prognose",
+    "polls": "Umfragen",
+    "logs": "Logs",
+    "pollsTitle": "Abstimmungen",
+    "systemTitle": "System"
+  },
+  "settings": {
+    "pageTitle": "Einstellungen und Optionen",
+    "account": {
+      "title": "Account",
+      "description": "Passwort ändern oder Account verwalten.",
+      "button": "Passwort ändern"
+    },
+    "themeTooltipLight": "Zum hellen Modus wechseln",
+    "themeTooltipDark": "Zum dunklen Modus wechseln",
+    "langButtonGerman": "Deutsch auswählen",
+    "langButtonEnglish": "Englisch auswählen",
+    "langAltDe": "Deutsche Flagge",
+    "langAltEn": "Englische Flagge"
+  },
+  "createUser": {
+    "appBarTitle": "Neuen Benutzer erstellen",
+    "formTitle": "Benutzerdetails eingeben",
+    "adminEmailLabel": "Admin-E-Mail (Ersteller)",
+    "usernameLabel": "Benutzername",
+    "emailLabel": "E-Mail",
+    "passwordLabel": "Passwort",
+    "roleLabel": "Rolle",
+    "roleUser": "User",
+    "roleAdmin": "Admin",
+    "submitButton": "Benutzer erstellen",
+    "toast": {
+      "fillAllFields": "Bitte alle erforderlichen Felder ausfüllen!",
+      "adminOnly": "Nur Admins können Benutzer erstellen!",
+      "userCreatedSuccess": "Benutzer erfolgreich erstellt!",
+      "userCreatedError": "Fehler beim Erstellen des Benutzers"
+    },
+    "password": {
+      "toggleVisibilityAriaLabel": "Passwort Details ein-/ausblenden"
+    }
+  },
+  "dashboard": {
+    "appBarTitle": "Prognose & Analyse",
+    "filters": {
+      "containerLabel": "Behälter",
+      "durationLabel": "Prognosedauer",
+      "durationOption1d": "Nächster Tag",
+      "durationOption7d": "Nächste 7 Tage",
+      "durationOption30d": "Nächste 30 Tage",
+      "durationOption90d": "Nächste 90 Tage",
+      "modelLabel": "KI-Modell für die Prognose",
+      "modelOptionProphet": "Facebook Prophet",
+      "modelOptionTensorflow": "TensorFlow/Keras",
+      "prophetAnomalyLabel": "Prophet: Anomalien f. Training nutzen?",
+      "prophetAnomalyNo": "Nein (Standard)",
+      "prophetAnomalyYes": "Ja"
+    },
+    "chart": {
+      "title": "Verbrauchsverlauf & Prognose",
+      "generatingOverlay": "Prognose wird generiert...",
+      "loadingDataOverlay": "Lade Daten...",
+      "uploadRequiredTitle": "Upload Erforderlich",
+      "uploadRequiredTextForContainer": "Bitte laden Sie historische und aktuelle Daten für den Behälter \"{{container}}\" hoch.",
+      "noDataTitle": "Keine Daten Geladen",
+      "noDataTextForContainer": "Für den Behälter \"{{container}}\" konnten keine historischen Daten geladen werden oder es sind keine vorhanden. Bitte überprüfen Sie Ihre Uploads.",
+      "lineNameActual": "Ist-Wert",
+      "lineNameForecast": "Prognose",
+      "refLineLabel": "Prognosestart",
+      "refAreaLabel": "Prognosezeitraum"
+    },
+    "tooltip": {
+      "invalidDate": "Ungültiges Datum"
+    },
+    "uploadCard": {
+      "title": "Daten hochladen",
+      "titleSingle": "Daten-Upload für ausgewählten Behälter",
+      "buttonForecastCsv": "Forecast Basis CSV hochladen",
+      "buttonActualCsv": "Ist-Daten CSV hochladen",
+      "buttonSingleUpload": "Daten für \"{{container}}\" hochladen (.csv)",
+      "buttonSelectFile": "Datei auswählen...",
+      "buttonUploadValidatedFile": "Validierte Datei hochladen",
+      "buttonUploading": "Lädt hoch...",
+      "selectFileForContainer": "Wähle eine CSV-Datei für den Behälter \"{{container}}\" aus."
+    },
+    "toast": {
+      "noHistoricalData": "Keine historischen Daten gefunden. Bitte CSV-Dateien erneut hochladen.",
+      "noHistoricalDataForContainer": "Keine historischen Daten für \"{{container}}\" gefunden.",
+      "errorLoadingHistorical": "Fehler beim Laden der historischen Daten.",
+      "generating": "Generiere Prognose für {{duration}} mit {{model}}...",
+      "forecastGenerated": "Prognose mit {{model}} generiert.",
+      "forecastGeneratedNoFuturePoints": "Prognose generiert (keine zukünftigen Punkte).",
+      "errorGeneratingForecast": "Fehler beim Generieren der Prognose.",
+      "unexpectedResponse": "Unerwartete Antwort vom Server.",
+      "uploadingForecastCsv": "Lade Forecast CSV hoch...",
+      "uploadingActualCsv": "Lade Actual CSV hoch...",
+      "uploadingData": "Lade Daten für \"{{container}}\" hoch...",
+      "uploadSuccess": "Daten für \"{{container}}\" erfolgreich hochgeladen!",
+      "uploadFailed": "Upload fehlgeschlagen.",
+      "uploadFailedFull": "Upload fehlgeschlagen. Bitte prüfe die Datei oder versuche es später erneut.",
+      "onlyCsvAllowed": "Nur CSV-Dateien (.csv) sind erlaubt.",
+      "noContainerSelected": "Kein Behälter ausgewählt.",
+      "endpointNotFound": "Endpunkt '{{path}}' nicht gefunden.",
+      "markingAsNotAnomaly": "Datenpunkt wird als 'Keine Anomalie' markiert...",
+      "markingAsAnomaly": "Datenpunkt wird als 'Anomalie' markiert...",
+      "dataPointStatusUpdated": "Status des Datenpunkts aktualisiert.",
+      "errorUpdatingDataPoint": "Fehler beim Aktualisieren des Datenpunkts.",
+      "noCustomContainersLoaded": "Es wurden keine benutzerdefinierten Behälter gefunden. Standardbehälter werden angezeigt.",
+      "errorLoadingContainers": "Fehler beim Laden der Behälterliste."
+    },
+    "validation": {
+      "emptyFile": "Die Datei ist leer oder konnte nicht gelesen werden.",
+      "missingDateColumn": "Die erforderliche Datumsspalte ('Date', 'Datum', etc.) fehlt im Header.",
+      "missingValueColumn": "Die erforderliche Wertespalte ('Value', 'Wert', etc.) fehlt im Header.",
+      "columnIndexError": "Fehler beim Spaltenindex.",
+      "missingDateValue": "Fehlender Datumswert.",
+      "invalidDateFormat": "Ungültiges Datumsformat.",
+      "missingNumericValue": "Fehlender numerischer Wert.",
+      "missingNumericValueClientWarn": "Fehlender numerischer Wert (Client-Warnung).",
+      "notANumber": "Ist keine gültige Zahl.",
+      "negativeValueNotAllowed": "Negativer Wert '{{value}}' nicht erlaubt.",
+      "valueTooHigh": "Wert '{{value}}' ist zu hoch (Max: {{maxVal}}).",
+      "fileReadError": "Fehler beim Lesen der Datei.",
+      "validatingFile": "Datei wird validiert...",
+      "errorsFoundInFile": "Fehler in der Datei gefunden!",
+      "fileIsValid": "Datei ist valide und bereit zum Hochladen.",
+      "fileHasWarningsProceedUpload": "Datei enthält Warnungen, Upload kann fortgesetzt werden.",
+      "fileReadyForUpload": "Datei ist bereit zum Hochladen.",
+      "pending": "Validierung ausstehend...",
+      "errorDetail": "Zeile {{row}}: {{message}}",
+      "errorColumnValue": "Spalte '{{column}}', Wert: '{{value}}'",
+      "valueOnly": "Wert: {{value}}",
+      "pleaseCorrectAndReupload": "Bitte korrigiere die Fehler in deiner CSV-Datei und wähle sie erneut aus.",
+      "fileReadyForUploadTitle": "Datei bereit",
+      "fileReadyForUploadText": "Die Datei '{{filename}}' wurde erfolgreich validiert und kann hochgeladen werden.",
+      "cannotUploadInvalidFile": "Die Datei enthält Fehler oder wurde nicht erfolgreich validiert und kann nicht hochgeladen werden.",
+      "cannotUploadInvalidFileFixErrors": "Datei kann nicht hochgeladen werden. Bitte Fehler beheben.",
+      "noFileSelectedForUpload": "Keine Datei zum Hochladen ausgewählt.",
+      "fileNotValidatedOrInvalid": "Datei nicht validiert oder ungültig.",
+      "warningsFoundInFileTitle": "Warnungen in Datei gefunden"
+    },
+    "adminActions": {
+      "title": "Admin-Aktionen",
+      "anomalyAnalysisTitle": "Anomalie-Analyse",
+      "analyzingAnomalies": "Anomalien für '{{container}}' werden analysiert...",
+      "analyzingAnomaliesShort": "Analysiere...",
+      "analyzeButton": "Analysieren & Markieren",
+      "analyzeSuccess": "{{count}} Anomalien für '{{container}}' erfolgreich markiert.",
+      "noAnomaliesFound": "Keine Anomalien für '{{container}}' gefunden.",
+      "analyzeError": "Fehler bei der Anomalieanalyse für '{{container}}'.",
+      "uploadDataFirst": "Bitte zuerst Daten für '{{container}}' hochladen.",
+      "analysisResultTitle": "Analyseergebnis",
+      "analysisResultError": "Ein Fehler ist während der Analyse aufgetreten.",
+      "anomaliesFoundCount": "{{count}} Anomalien in '{{container}}' gefunden.",
+      "anomalySampleTitle": "Beispiel-Anomalien:",
+      "anomalySampleDetail": "{{date}}: {{value}}",
+      "markAsNotAnomalyTooltip": "Als 'Keine Anomalie' markieren",
+      "markAsAnomalyTooltip": "Als Anomalie markieren",
+      "clearResultsButton": "Ergebnisse ausblenden",
+      "dataCleaningTitle": "Datenbereinigung",
+      "cleaningData": "Daten für '{{container}}' werden bereinigt...",
+      "cleaningInProgressButton": "Bereinigung läuft...",
+      "cleanDataButton": "Daten bereinigen",
+      "cleaningSuccess": "Datenbereinigung erfolgreich, {{count}} Werte wurden geändert.",
+      "cleaningSuccessCount": "{{count}} fehlende Werte wurden interpoliert.",
+      "noDataToClean": "Keine fehlenden Werte gefunden oder es konnten keine Werte interpoliert werden.",
+      "cleaningError": "Fehler bei der Datenbereinigung für '{{container}}'.",
+      "uploadDataFirstForCleaning": "Bitte zuerst Daten für '{{container}}' hochladen, um die Bereinigung durchzuführen.",
+      "cleaningResultTitle": "Bereinigungsergebnis",
+      "cleaningErrorOccurred": "Ein Fehler ist während der Bereinigung aufgetreten.",
+      "cleaningReportTitle": "Bereinigungsbericht",
+      "cleaningReportPartialTitle": "Bereinigungsbericht (Teilweise)",
+      "cleaningReportNansBefore": "Fehlende Werte (NaNs) vor der Bereinigung: {{count}}",
+      "cleaningReportValuesImputed": "Anzahl der imputierten (eingefügten) Werte: {{count}}",
+      "cleaningReportDbRowsUpdated": "Anzahl der in der Datenbank aktualisierten Zeilen: {{count}}",
+      "cleaningReportNansAfter": "Fehlende Werte (NaNs) nach der Bereinigung: {{count}}",
+      "modelTrainingReportTitle": "Modell Trainingsbericht ({{model}})"
+    },
+    "modelReport": {
+      "detectedChangepoints": "Erkannte Changepoints",
+      "changepointPriorScale": "Changepoint Prior Scale",
+      "seasonalityPriorScale": "Seasonality Prior Scale",
+      "seasonalityMode": "Saisonalitätsmodus",
+      "dailySeasonality": "Tägliche Saisonalität (Einstellung)",
+      "activeSeasonalities": "Aktive Saisonalitäten",
+      "activeRegressors": "Aktive Regressoren",
+      "holidaysConfigured": "Konfigurierte Feiertage (Anzahl)",
+      "trainingLoss": "Trainings-Loss",
+      "validationLoss": "Validierungs-Loss",
+      "lookBackWindow": "Look-back Fenster",
+      "lstmUnitsL1": "LSTM Einheiten (Schicht 1)",
+      "lstmUnitsL2": "LSTM Einheiten (Schicht 2)",
+      "dropoutRate": "Dropout-Rate",
+      "epochsTrained": "Epochen trainiert",
+      "earlyStoppingPatience": "Early Stopping Geduld",
+      "batchSize": "Batch-Größe",
+      "featuresUsedCount": "Anzahl verwendeter Features"
+    },
+    "containerManagement": {
+      "title": "Behälterverwaltung",
+      "addNewContainer": "Neuen Behälter hinzufügen",
+      "editContainerTitle": "Behälter bearbeiten",
+      "addContainerTitle": "Neuen Behälter hinzufügen",
+      "containerNameLabel": "Behältername",
+      "nameEmpty": "Behältername darf nicht leer sein.",
+      "updatingContainer": "Behälter wird aktualisiert...",
+      "addingContainer": "Behälter wird hinzugefügt...",
+      "containerUpdated": "Behälter erfolgreich aktualisiert.",
+      "containerAdded": "Behälter erfolgreich hinzugefügt.",
+      "addEditError": "Fehler beim Hinzufügen/Bearbeiten des Behälters.",
+      "confirmDelete": "Sind Sie sicher, dass Sie den Behälter \"{{container}}\" und alle zugehörigen Daten löschen möchten? Dies kann nicht rückgängig gemacht werden.",
+      "deletingContainer": "Behälter \"{{container}}\" wird gelöscht...",
+      "containerDeleted": "Behälter \"{{container}}\" erfolgreich gelöscht.",
+      "deleteError": "Fehler beim Löschen des Behälters.",
+      "noCustomContainers": "Keine benutzerdefinierten Behälter vorhanden.",
+      "cannotDeleteDefault": "Standardbehälter können nicht gelöscht werden."
+    }
+  },
+  "status": {
+    "appBarTitle": "Status & Warnungen",
+    "pageTitle": "System-Status & Warnungen",
+    "filters": {
+      "severityLabel": "Filtern nach Schwere",
+      "severityAll": "Alle",
+      "severityHigh": "Hoch",
+      "severityMedium": "Mittel",
+      "severityLow": "Niedrig"
+    },
+    "noWarningsFoundForSeverity": "Keine Warnungen für Schweregrad \"{{severity}}\" gefunden.",
+    "noWarningsDetected": "Keine Warnungen erkannt. Systemstatus nominal.",
+    "warning": {
+      "riskSuffix": "RISIKO",
+      "probabilitySuffix": "Wahrscheinlichkeit",
+      "timeframePrefix": "Zeitrahmen"
+    },
+    "operationalSystems": {
+      "title": "Betriebsbereite Systeme",
+      "statusPrefix": "Status",
+      "lastCheckPrefix": "Letzte Prüfung"
+    }
+  },
+  "profile": {
+    "changePictureTooltip": "Profilbild ändern (klicken)",
+    "contactDetailsTitle": "Kontaktdetails",
+    "emailLabel": "E-Mail",
+    "phoneNumberLabel": "Telefonnummer",
+    "locationLabel": "Standort",
+    "editButton": "Profil bearbeiten",
+    "editContactDetailsDialogTitle": "Kontaktdaten bearbeiten",
+    "phoneNumberPlaceholder": "+43 123 45678",
+    "locationPlaceholder": "z.B. Wien, Österreich",
+    "phoneNumberInvalidFormat": "Ungültiges Format für Telefonnummer.",
+    "uploadPictureLoading": "Lade Profilbild hoch...",
+    "uploadPictureSuccess": "Bild erfolgreich hochgeladen!",
+    "uploadPictureError": "Fehler beim Hochladen des Bildes.",
+    "savingProfileLoading": "Speichere Profil...",
+    "saveProfileSuccess": "Profil erfolgreich aktualisiert!",
+    "saveProfileError": "Fehler beim Aktualisieren des Profils.",
+    "phoneNumberInvalidToast": "Bitte gib eine gültige Telefonnummer ein.",
+    "locationInvalidToast": "Standort darf nicht nur Leerzeichen enthalten.",
+    "failedToLoadUserToast": "Fehler beim Laden der Benutzerdaten."
+  },
+  "homepage": {
+    "logoutSuccessToast": "Erfolgreich ausgeloggt.",
+    "greeting": {
+      "hello": "Hallo",
+      "welcome": "Willkommen",
+      "niceToSeeYou": "Schön dich zu sehen",
+      "servus": "Servus",
+      "goodDay": "Guten Tag"
+    },
+    "subtitle": "Wähle einen Bereich, um fortzufahren.",
+    "card": {
+      "polls": {
+        "title": "Abstimmungen",
+        "description": "An Umfragen teilnehmen oder erstellen."
+      },
+      "logs": {
+        "title": "Aufzeichnungen",
+        "description": "System-Aktivitäten & Logs einsehen."
+      },
+      "userManagement": {
+        "title": "Benutzerverwaltung",
+        "description": "Benutzerkonten anzeigen & verwalten."
+      },
+      "forecast": {
+        "title": "Daten & Prognosen",
+        "description": "Vorhersagen analysieren & Daten hochladen."
+      },
+      "profile": {
+        "title": "Profil",
+        "description": "Deine persönlichen Daten verwalten."
+      },
+      "logout": {
+        "title": "Abmelden",
+        "description": "Sicher von der Anwendung abmelden."
+      }
+    }
+  },
+  "polls": {
+    "appBarTitle": "Abstimmungen",
+    "pageTitle": "Aktive Abstimmungen",
+    "createButton": "Neue Abstimmung",
+    "createFormTitle": "Neue Abstimmung erstellen",
+    "createFormTitleLabel": "Titel der Abstimmung",
+    "createFormDescriptionLabel": "Beschreibung (Optional)",
+    "createFormOptionsLabel": "Optionen (eine pro Zeile)",
+    "createFormOptionsPlaceholder": "Option 1\nOption 2\nOption 3...",
+    "createFormOptionsHelperText": "Geben Sie jede Antwortmöglichkeit in eine neue Zeile ein.",
+    "createSubmitButton": "Erstellen",
+    "toast": {
+      "loadingPollsErrorGeneric": "Fehler beim Laden der Abstimmungen.",
+      "loadingPollsErrorMsg": "Fehler beim Laden: {{message}}",
+      "loadingPollsErrorUnknown": "Ein unbekannter Fehler ist beim Laden aufgetreten.",
+      "votingLoading": "Stimme wird übermittelt...",
+      "votingSuccess": "Erfolgreich abgestimmt!",
+      "votingErrorGeneric": "Fehler beim Abstimmen.",
+      "votingErrorMsg": "Fehler beim Abstimmen: {{message}}",
+      "votingErrorNoOption": "Bitte wählen Sie eine Option aus.",
+      "createPollOptionsMinError": "Mindestens zwei Optionen sind erforderlich.",
+      "createPollLoading": "Abstimmung wird erstellt...",
+      "createPollSuccess": "Abstimmung erfolgreich erstellt!",
+      "createPollErrorGeneric": "Fehler beim Erstellen der Abstimmung.",
+      "createPollErrorTitleMissing": "Titel darf nicht leer sein.",
+      "deletePollLoading": "Abstimmung wird gelöscht...",
+      "deletePollSuccess": "Abstimmung erfolgreich gelöscht!",
+      "deleteErrorGeneric": "Fehler beim Löschen der Abstimmung.",
+      "deleteErrorMsg": "Fehler beim Löschen: {{message}}"
+    },
+    "createdByPrefix": "Erstellt von: {{creator}}",
+    "noActivePolls": "Derzeit keine aktive Abstimmung vorhanden.",
+    "noActivePollsHint": "Als Admin kannst du eine neue Abstimmung erstellen.",
+    "youCreatedThis": "Du hast diese Abstimmung erstellt.",
+    "youAlreadyVoted": "Du hast bereits abgestimmt.",
+    "voteButton": "Abstimmen",
+    "deleteButtonAriaLabel": "Abstimmung löschen",
+    "voteAriaLabel": "Abstimmung {{pollId}}",
+    "deleteDialogTitle": "Abstimmung löschen?",
+    "deleteDialogContent": "Möchtest du die Abstimmung \"{{pollTitle}}\" wirklich endgültig löschen? Alle zugehörigen Stimmen gehen dabei verloren."
+  },
+  "logs": {
+    "appBarTitle": "Aufzeichnungen",
+    "pageTitle": "System-Logs",
+    "filters": {
+      "label": "Filter",
+      "severityLabel": "Schweregrad",
+      "allLevels": "Alle Schweregrade",
+      "userLabel": "Benutzer",
+      "allUsers": "Alle Benutzer",
+      "startDateLabel": "Startdatum",
+      "endDateLabel": "Enddatum",
+      "resetTooltip": "Filter zurücksetzen"
+    },
+    "stats": {
+      "results": "Ergebnisse: {{count}}",
+      "errors": "{{count}} Fehler",
+      "warnings": "{{count}} Warnungen"
+    },
+    "empty": {
+      "noData": "Noch keine Log-Daten vorhanden.",
+      "noMatchingLogs": "Keine Logs gefunden, die den Filterkriterien entsprechen."
+    },
+    "level": {
+      "info": "INFO",
+      "warn": "WARNUNG",
+      "error": "FEHLER",
+      "debug": "DEBUG"
+    },
+    "timestamp": {
+      "invalidDate": "Ungültiges Datum"
+    },
+    "details": {
+      "toggleButtonAriaLabel": "Details ein-/ausblenden"
+    },
+    "pagination": {
+      "labelRowsPerPage": "Logs pro Seite:"
+    },
+    "toast": {
+      "fetchLogsErrorAuth": "Sitzung abgelaufen oder keine Berechtigung.",
+      "fetchLogsErrorNotFound": "Log-Endpunkt nicht gefunden (404). Bitte Backend prüfen.",
+      "fetchLogsErrorGeneric": "Protokolle konnten nicht geladen werden.",
+      "fetchLogsErrorUnknown": "Ein unbekannter Fehler ist beim Laden der Protokolle aufgetreten."
+    }
+  },
+  "userList": {
+    "appBarTitle": "Benutzerliste",
+    "filter": {
+      "searchPlaceholder": "Benutzer suchen (Name / E-Mail)...",
+      "roleLabel": "Rolle filtern",
+      "allRoles": "Alle Rollen",
+      "onlyAdmins": "Nur Admins",
+      "onlyUsers": "Nur Benutzer"
+    },
+    "table": {
+      "ariaLabel": "Benutzerliste Tabelle",
+      "header": {
+        "profilePicture": "Profilbild",
+        "username": "Benutzername",
+        "email": "E-Mail",
+        "role": "Rolle",
+        "actions": "Aktionen"
+      },
+      "sortLabel": {
+        "sortedDescending": "absteigend sortiert",
+        "sortedAscending": "aufsteigend sortiert"
+      },
+      "actions": {
+        "notAllowed": "-",
+        "deleteTooltip": "Benutzer {{username}} löschen"
+      }
+    },
+    "empty": {
+      "noCriteriaMatch": "Keine Benutzer entsprechen den Filterkriterien.",
+      "noUsersFound": "Keine Benutzer gefunden."
+    },
+    "deleteDialog": {
+      "title": "Benutzer löschen bestätigen",
+      "content": "Möchtest du den Benutzer \"{{username}}\" wirklich unwiderruflich löschen?"
+    },
+    "toast": {
+      "loadUsersError": "Fehler beim Laden der Benutzerliste.",
+      "actionNotAllowed": "Aktion nicht erlaubt.",
+      "deleteLoading": "Lösche Benutzer...",
+      "deleteSuccess": "Benutzer \"{{username}}\" gelöscht.",
+      "deleteErrorGeneric": "Fehler beim Löschen des Benutzers.",
+      "deleteErrorMsg": "Fehler beim Löschen: {{message}}"
+    }
+  },
+  "role": {
+    "Admin": "Admin",
+    "User": "Benutzer"
+  },
+  "signIn": {
+    "welcomeTitle": "Willkommen zurück!",
+    "subtitle": "Bitte melde dich an, um fortzufahren.",
+    "emailLabel": "E-Mail-Adresse",
+    "passwordLabel": "Passwort",
+    "password": {
+      "toggleVisibilityAriaLabel": "Passwort Details ein-/ausblenden"
+    },
+    "submitButton": "Anmelden",
+    "forgotPasswordLink": "Passwort vergessen?",
+    "toast": {
+      "fieldsRequired": "Bitte E-Mail und Passwort eingeben.",
+      "loginSuccess": "Login erfolgreich!",
+      "loginErrorGeneric": "Login fehlgeschlagen. Überprüfe E-Mail und Passwort."
+    }
+  }
+}

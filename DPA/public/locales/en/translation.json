@@ -1,0 +1,479 @@
+{
+  "settingsTitle": "Settings",
+  "darkMode": "Dark Mode",
+  "language": "Language",
+  "themeDesc": "Switch between light and dark themes.",
+  "langDesc": "Choose your preferred language.",
+  "common": {
+    "home": "Home",
+    "accessDenied": "Access denied.",
+    "notSpecified": "Not specified",
+    "cancel": "Cancel",
+    "save": "Save",
+    "add": "Add",
+    "deleteButton": "Delete",
+    "authTokenMissingToast": "Authentication required.",
+    "incompleteUserDataToast": "Incomplete user data for context update.",
+    "sessionInvalidToast": "Session invalid.",
+    "userDataNotLoadedToast": "User data not fully loaded.",
+    "yes": "Yes",
+    "no": "No",
+    "none": "None"
+  },
+  "navbar": {
+    "profileSettings": "Settings",
+    "myProfile": "My Profile",
+    "profileTitle": "Profile",
+    "userList": "User List",
+    "createUser": "Create User",
+    "userManagementTitle": "User Management",
+    "forecastAnalyse": "Analysis",
+    "forecastStatus": "Status / Warnings",
+    "forecastTitle": "Forecast",
+    "polls": "Polls",
+    "logs": "Logs",
+    "pollsTitle": "Polls",
+    "systemTitle": "System"
+  },
+  "settings": {
+    "pageTitle": "Settings and Options",
+    "account": {
+      "title": "Account",
+      "description": "Change password or manage account.",
+      "button": "Change Password"
+    },
+    "themeTooltipLight": "Switch to Light Mode",
+    "themeTooltipDark": "Switch to Dark Mode",
+    "langButtonGerman": "Select German",
+    "langButtonEnglish": "Select English",
+    "langAltDe": "German flag",
+    "langAltEn": "English flag"
+  },
+  "createUser": {
+    "appBarTitle": "Create New User",
+    "formTitle": "Enter User Details",
+    "adminEmailLabel": "Admin Email (Creator)",
+    "usernameLabel": "Username",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "roleLabel": "Role",
+    "roleUser": "User",
+    "roleAdmin": "Admin",
+    "submitButton": "Create User",
+    "toast": {
+      "fillAllFields": "Please fill in all required fields!",
+      "adminOnly": "Only Admins can create users!",
+      "userCreatedSuccess": "User created successfully!",
+      "userCreatedError": "Error creating user"
+    },
+    "password": {
+      "toggleVisibilityAriaLabel": "toggle password visibility"
+    }
+  },
+  "dashboard": {
+    "appBarTitle": "Forecast & Analysis",
+    "filters": {
+      "containerLabel": "Container",
+      "durationLabel": "Forecast Overview",
+      "durationOption1d": "Next Day",
+      "durationOption7d": "Next 7 Days",
+      "durationOption30d": "Next 30 Days",
+      "durationOption90d": "Next 90 Days",
+      "modelLabel": "AI Model for Forecast",
+      "modelOptionProphet": "Facebook Prophet",
+      "modelOptionTensorflow": "TensorFlow/Keras",
+      "prophetAnomalyLabel": "Prophet: Use anomalies for training?",
+      "prophetAnomalyNo": "No (Default)",
+      "prophetAnomalyYes": "Yes"
+    },
+    "chart": {
+      "title": "Consumption History & Forecast",
+      "generatingOverlay": "Generating Forecast...",
+      "loadingDataOverlay": "Loading Data...",
+      "uploadRequiredTitle": "Upload Required",
+      "uploadRequiredTextForContainer": "Please upload historical and actual data for the container \"{{container}}\".",
+      "noDataTitle": "No Data Loaded",
+      "noDataTextForContainer": "Could not load historical data for container \"{{container}}\" or none is available. Please check your uploads.",
+      "lineNameActual": "Actual",
+      "lineNameForecast": "Forecast",
+      "refLineLabel": "Forecast Start",
+      "refAreaLabel": "Forecast Period"
+    },
+    "tooltip": {
+      "invalidDate": "Invalid Date"
+    },
+    "uploadCard": {
+      "title": "Data Upload",
+      "titleSingle": "Data Upload for Selected Container",
+      "buttonForecastCsv": "Upload Forecast Base CSV",
+      "buttonActualCsv": "Upload Actual Data CSV",
+      "buttonSingleUpload": "Upload Data for \"{{container}}\" (.csv)",
+      "buttonSelectFile": "Select File...",
+      "buttonUploadValidatedFile": "Upload Validated File",
+      "buttonUploading": "Uploading...",
+      "selectFileForContainer": "Select a CSV file for the container \"{{container}}\"."
+    },
+    "toast": {
+      "noHistoricalData": "No historical data found. Please upload CSV files again.",
+      "noHistoricalDataForContainer": "No historical data found for \"{{container}}\".",
+      "errorLoadingHistorical": "Error loading historical data.",
+      "generating": "Generating forecast for {{duration}} with {{model}}...",
+      "forecastGenerated": "Forecast generated with {{model}}.",
+      "forecastGeneratedNoFuturePoints": "Forecast generated (no future points).",
+      "errorGeneratingForecast": "Error generating forecast.",
+      "unexpectedResponse": "Unexpected response from server.",
+      "uploadingForecastCsv": "Uploading Forecast CSV...",
+      "uploadingActualCsv": "Uploading Actual Data CSV...",
+      "uploadingData": "Uploading data for \"{{container}}\"...",
+      "uploadSuccess": "Data for \"{{container}}\" uploaded successfully!",
+      "uploadFailed": "Upload failed.",
+      "uploadFailedFull": "Upload failed. Please check the file or try again later.",
+      "onlyCsvAllowed": "Only CSV files (.csv) are allowed.",
+      "noContainerSelected": "No container selected.",
+      "endpointNotFound": "Endpoint '{{path}}' not found.",
+      "markingAsNotAnomaly": "Marking data point as 'Not Anomaly'...",
+      "markingAsAnomaly": "Marking data point as 'Anomaly'...",
+      "dataPointStatusUpdated": "Data point status updated.",
+      "errorUpdatingDataPoint": "Error updating data point.",
+      "noCustomContainersLoaded": "No custom containers found. Default containers will be displayed.",
+      "errorLoadingContainers": "Error loading container list."
+    },
+    "validation": {
+      "emptyFile": "The file is empty or could not be read.",
+      "missingDateColumn": "Required date column ('Date', 'Datum', etc.) is missing in the header.",
+      "missingValueColumn": "Required value column ('Value', 'Wert', etc.) is missing in the header.",
+      "columnIndexError": "Column index error.",
+      "missingDateValue": "Missing date value.",
+      "invalidDateFormat": "Invalid date format.",
+      "missingNumericValue": "Missing numeric value.",
+      "missingNumericValueClientWarn": "Missing numeric value (client warning).",
+      "notANumber": "Is not a valid number.",
+      "negativeValueNotAllowed": "Negative value '{{value}}' not allowed.",
+      "valueTooHigh": "Value '{{value}}' is too high (Max: {{maxVal}}).",
+      "fileReadError": "Error reading the file.",
+      "validatingFile": "Validating file...",
+      "errorsFoundInFile": "Errors found in the file!",
+      "fileIsValid": "File is valid and ready for upload.",
+      "fileHasWarningsProceedUpload": "File has warnings, upload can proceed.",
+      "fileReadyForUpload": "File is ready for upload.",
+      "pending": "Validation pending...",
+      "errorDetail": "Row {{row}}: {{message}}",
+      "errorColumnValue": "Column '{{column}}', Value: '{{value}}'",
+      "valueOnly": "Value: {{value}}",
+      "pleaseCorrectAndReupload": "Please correct the errors in your CSV file and select it again.",
+      "fileReadyForUploadTitle": "File Ready",
+      "fileReadyForUploadText": "The file '{{filename}}' has been validated successfully and can be uploaded.",
+      "cannotUploadInvalidFile": "The file contains errors or has not been validated successfully and cannot be uploaded.",
+      "cannotUploadInvalidFileFixErrors": "Cannot upload file. Please fix errors.",
+      "noFileSelectedForUpload": "No file selected for upload.",
+      "fileNotValidatedOrInvalid": "File not validated or invalid.",
+      "warningsFoundInFileTitle": "Warnings Found In File"
+    },
+    "adminActions": {
+      "title": "Admin Actions",
+      "anomalyAnalysisTitle": "Anomaly Analysis",
+      "analyzingAnomalies": "Analyzing anomalies for '{{container}}'...",
+      "analyzingAnomaliesShort": "Analyzing...",
+      "analyzeButton": "Analyze & Mark",
+      "analyzeSuccess": "{{count}} anomalies successfully marked for '{{container}}'.",
+      "noAnomaliesFound": "No anomalies found for '{{container}}'.",
+      "analyzeError": "Error analyzing anomalies for '{{container}}'.",
+      "uploadDataFirst": "Please upload data for '{{container}}' first.",
+      "analysisResultTitle": "Analysis Result",
+      "analysisResultError": "An error occurred during analysis.",
+      "anomaliesFoundCount": "{{count}} anomalies found in '{{container}}'.",
+      "anomalySampleTitle": "Sample Anomalies:",
+      "anomalySampleDetail": "{{date}}: {{value}}",
+      "markAsNotAnomalyTooltip": "Mark as 'Not Anomaly'",
+      "markAsAnomalyTooltip": "Mark as 'Anomaly'",
+      "clearResultsButton": "Clear Results",
+      "dataCleaningTitle": "Data Cleaning",
+      "cleaningData": "Cleaning data for '{{container}}'...",
+      "cleaningInProgressButton": "Cleaning in progress...",
+      "cleanDataButton": "Clean Data",
+      "cleaningSuccess": "Data cleaning successful, {{count}} values were changed.",
+      "cleaningSuccessCount": "{{count}} missing values were interpolated.",
+      "noDataToClean": "No data to clean for '{{container}}'.",
+      "cleaningError": "Error during data cleaning for '{{container}}'.",
+      "uploadDataFirstForCleaning": "Please upload data for '{{container}}' first to perform cleaning.",
+      "cleaningResultTitle": "Cleaning Result",
+      "cleaningErrorOccurred": "An error occurred during cleaning.",
+      "cleaningReportTitle": "Cleaning Report",
+      "cleaningReportPartialTitle": "Cleaning Report (Partial)",
+      "cleaningReportNansBefore": "NaNs before cleaning: {{count}}",
+      "cleaningReportValuesImputed": "Values imputed: {{count}}",
+      "cleaningReportDbRowsUpdated": "DB rows updated: {{count}}",
+      "cleaningReportNansAfter": "NaNs after cleaning: {{count}}",
+      "modelTrainingReportTitle": "Model Training Report ({{model}})"
+    },
+    "modelReport": {
+      "detectedChangepoints": "Detected Changepoints",
+      "changepointPriorScale": "Changepoint Prior Scale",
+      "seasonalityPriorScale": "Seasonality Prior Scale",
+      "seasonalityMode": "Seasonality Mode",
+      "dailySeasonality": "Daily Seasonality (Setting)",
+      "activeSeasonalities": "Active Seasonalities",
+      "activeRegressors": "Active Regressors",
+      "holidaysConfigured": "Configured Holidays (Count)",
+      "trainingLoss": "Training Loss",
+      "validationLoss": "Validation Loss",
+      "lookBackWindow": "Look-back Window",
+      "lstmUnitsL1": "LSTM Units (Layer 1)",
+      "lstmUnitsL2": "LSTM Units (Layer 2)",
+      "dropoutRate": "Dropout Rate",
+      "epochsTrained": "Epochs Trained",
+      "earlyStoppingPatience": "Early Stopping Patience",
+      "batchSize": "Batch Size",
+      "featuresUsedCount": "Features Used Count"
+    },
+    "containerManagement": {
+      "title": "Container Management",
+      "addNewContainer": "Add New Container",
+      "editContainerTitle": "Edit Container",
+      "addContainerTitle": "Add New Container",
+      "containerNameLabel": "Container Name",
+      "nameEmpty": "Container name cannot be empty.",
+      "updatingContainer": "Updating container...",
+      "addingContainer": "Adding container...",
+      "containerUpdated": "Container updated successfully.",
+      "containerAdded": "Container added successfully.",
+      "addEditError": "Error adding/editing container.",
+      "confirmDelete": "Are you sure you want to delete container \"{{container}}\" and all associated data? This cannot be undone.",
+      "deletingContainer": "Deleting container \"{{container}}\"...",
+      "containerDeleted": "Container \"{{container}}\" successfully deleted.",
+      "deleteError": "Error deleting container.",
+      "noCustomContainers": "No custom containers available.",
+      "cannotDeleteDefault": "Default containers cannot be deleted."
+    }
+  },
+  "status": {
+    "appBarTitle": "Status & Warnings",
+    "pageTitle": "System Status & Warnings",
+    "filters": {
+      "severityLabel": "Filter by Severity",
+      "severityAll": "All",
+      "severityHigh": "High",
+      "severityMedium": "Medium",
+      "severityLow": "Low"
+    },
+    "noWarningsFoundForSeverity": "No warnings found for severity \"{{severity}}\".",
+    "noWarningsDetected": "No warnings detected. System status nominal.",
+    "warning": {
+      "riskSuffix": "RISK",
+      "probabilitySuffix": "Probability",
+      "timeframePrefix": "Timeframe"
+    },
+    "operationalSystems": {
+      "title": "Operational Systems",
+      "statusPrefix": "Status",
+      "lastCheckPrefix": "Last check"
+    }
+  },
+  "profile": {
+    "changePictureTooltip": "Change profile picture (click)",
+    "contactDetailsTitle": "Contact Details",
+    "emailLabel": "Email",
+    "phoneNumberLabel": "Phone Number",
+    "locationLabel": "Location",
+    "editButton": "Edit Profile",
+    "editContactDetailsDialogTitle": "Edit Contact Details",
+    "phoneNumberPlaceholder": "+1 555 1234567",
+    "locationPlaceholder": "e.g. New York, USA",
+    "phoneNumberInvalidFormat": "Invalid phone number format.",
+    "uploadPictureLoading": "Uploading profile picture...",
+    "uploadPictureSuccess": "Picture uploaded successfully!",
+    "uploadPictureError": "Failed to upload picture.",
+    "savingProfileLoading": "Saving profile...",
+    "saveProfileSuccess": "Profile updated successfully!",
+    "saveProfileError": "Failed to update profile.",
+    "phoneNumberInvalidToast": "Please enter a valid phone number.",
+    "locationInvalidToast": "Location cannot contain only whitespace.",
+    "failedToLoadUserToast": "Failed to load user data."
+  },
+  "homepage": {
+    "logoutSuccessToast": "Successfully logged out.",
+    "greeting": {
+      "hello": "Hello",
+      "welcome": "Welcome",
+      "niceToSeeYou": "Nice to see you",
+      "servus": "Servus",
+      "goodDay": "Good day"
+    },
+    "subtitle": "Choose an area to proceed.",
+    "card": {
+      "polls": {
+        "title": "Polls",
+        "description": "Participate in or create polls."
+      },
+      "logs": {
+        "title": "Logs",
+        "description": "View system activity & logs."
+      },
+      "userManagement": {
+        "title": "User Management",
+        "description": "View & manage user accounts."
+      },
+      "forecast": {
+        "title": "Data & Forecasts",
+        "description": "Analyze forecasts & upload data."
+      },
+      "profile": {
+        "title": "Profile",
+        "description": "Manage your personal data."
+      },
+      "logout": {
+        "title": "Logout",
+        "description": "Safely log out of the application."
+      }
+    }
+  },
+  "polls": {
+    "appBarTitle": "Polls",
+    "pageTitle": "Active Polls",
+    "createButton": "New Poll",
+    "createFormTitle": "Create New Poll",
+    "createFormTitleLabel": "Poll Title",
+    "createFormDescriptionLabel": "Description (Optional)",
+    "createFormOptionsLabel": "Options (one per line)",
+    "createFormOptionsPlaceholder": "Option 1\nOption 2\nOption 3...",
+    "createFormOptionsHelperText": "Enter each answer option on a new line.",
+    "createSubmitButton": "Create",
+    "toast": {
+      "loadingPollsErrorGeneric": "Error loading polls.",
+      "loadingPollsErrorMsg": "Error loading: {{message}}",
+      "loadingPollsErrorUnknown": "An unknown error occurred while loading.",
+      "votingLoading": "Submitting vote...",
+      "votingSuccess": "Successfully voted!",
+      "votingErrorGeneric": "Error submitting vote.",
+      "votingErrorMsg": "Error submitting vote: {{message}}",
+      "votingErrorNoOption": "Please select an option.",
+      "createPollOptionsMinError": "At least two options are required.",
+      "createPollLoading": "Creating poll...",
+      "createPollSuccess": "Poll created successfully!",
+      "createPollErrorGeneric": "Error creating poll.",
+      "createPollErrorTitleMissing": "Title cannot be empty.",
+      "deletePollLoading": "Deleting poll...",
+      "deletePollSuccess": "Poll successfully deleted!",
+      "deleteErrorGeneric": "Error deleting poll.",
+      "deleteErrorMsg": "Error deleting: {{message}}"
+    },
+    "createdByPrefix": "Created by: {{creator}}",
+    "noActivePolls": "No active polls available at the moment.",
+    "noActivePollsHint": "As an Admin, you can create a new poll.",
+    "youCreatedThis": "You created this poll.",
+    "youAlreadyVoted": "You have already voted.",
+    "voteButton": "Vote",
+    "deleteButtonAriaLabel": "Delete poll",
+    "voteAriaLabel": "Poll {{pollId}}",
+    "deleteDialogTitle": "Delete Poll?",
+    "deleteDialogContent": "Are you sure you want to permanently delete the poll \"{{pollTitle}}\"? All associated votes will be lost."
+  },
+  "logs": {
+    "appBarTitle": "Logs",
+    "pageTitle": "System Logs",
+    "filters": {
+      "label": "Filter",
+      "severityLabel": "Severity",
+      "allLevels": "All Severities",
+      "userLabel": "User",
+      "allUsers": "All Users",
+      "startDateLabel": "Start Date",
+      "endDateLabel": "End Date",
+      "resetTooltip": "Reset filters"
+    },
+    "stats": {
+      "results": "Results: {{count}}",
+      "errors": "{{count}} Errors",
+      "warnings": "{{count}} Warnings"
+    },
+    "empty": {
+      "noData": "No log data available yet.",
+      "noMatchingLogs": "No logs found matching the filter criteria."
+    },
+    "level": {
+      "info": "INFO",
+      "warn": "WARN",
+      "error": "ERROR",
+      "debug": "DEBUG"
+    },
+    "timestamp": {
+      "invalidDate": "Invalid Date"
+    },
+    "details": {
+      "toggleButtonAriaLabel": "Toggle details"
+    },
+    "pagination": {
+      "labelRowsPerPage": "Logs per page:"
+    },
+    "toast": {
+      "fetchLogsErrorAuth": "Session expired or no permission.",
+      "fetchLogsErrorNotFound": "Log endpoint not found (404). Please check backend.",
+      "fetchLogsErrorGeneric": "Could not load logs.",
+      "fetchLogsErrorUnknown": "An unknown error occurred while loading logs."
+    }
+  },
+  "userList": {
+    "appBarTitle": "User List",
+    "filter": {
+      "searchPlaceholder": "Search users (Name / Email)...",
+      "roleLabel": "Filter Role",
+      "allRoles": "All Roles",
+      "onlyAdmins": "Only Admins",
+      "onlyUsers": "Only Users"
+    },
+    "table": {
+      "ariaLabel": "User list table",
+      "header": {
+        "profilePicture": "Profile Picture",
+        "username": "Username",
+        "email": "Email",
+        "role": "Role",
+        "actions": "Actions"
+      },
+      "sortLabel": {
+        "sortedDescending": "sorted descending",
+        "sortedAscending": "sorted ascending"
+      },
+      "actions": {
+        "notAllowed": "-",
+        "deleteTooltip": "Delete user {{username}}"
+      }
+    },
+    "empty": {
+      "noCriteriaMatch": "No users match the filter criteria.",
+      "noUsersFound": "No users found."
+    },
+    "deleteDialog": {
+      "title": "Confirm User Deletion",
+      "content": "Are you sure you want to permanently delete user \"{{username}}\"?"
+    },
+    "toast": {
+      "loadUsersError": "Error loading user list.",
+      "actionNotAllowed": "Action not allowed.",
+      "deleteLoading": "Deleting user...",
+      "deleteSuccess": "User \"{{username}}\" deleted.",
+      "deleteErrorGeneric": "Error deleting user.",
+      "deleteErrorMsg": "Error deleting: {{message}}"
+    }
+  },
+  "role": {
+    "Admin": "Admin",
+    "User": "User"
+  },
+  "signIn": {
+    "welcomeTitle": "Welcome back!",
+    "subtitle": "Please log in to continue.",
+    "emailLabel": "Email Address",
+    "passwordLabel": "Password",
+    "password": {
+      "toggleVisibilityAriaLabel": "toggle password visibility"
+    },
+    "submitButton": "Login",
+    "forgotPasswordLink": "Forgot password?",
+    "toast": {
+      "fieldsRequired": "Please enter email and password.",
+      "loginSuccess": "Login successful!",
+      "loginErrorGeneric": "Login failed. Check email and password."
+    }
+  }
+}
