@@ -13,7 +13,7 @@ Diese Anleitung beschreibt die notwendigen Schritte zur lokalen Installation und
 Für die erfolgreiche Ausführung des Projekts benötigen Sie folgende Software auf Ihrem Computer. Bitte stellen Sie sicher, dass Sie die hier angegebenen Versionen oder neuere, kompatible Versionen verwenden.
 
 * **Betriebssystem:** Windows 10+ (64-bit), macOS 11+ (Intel oder Apple Silicon), oder eine aktuelle Linux-Distribution.
-* [cite_start]**.NET SDK:** Version 8.0.408 (oder höher, kompatibel) 
+* **.NET SDK:** Version 8.0.408 (oder höher, kompatibel) 
     * Wird für das Haupt-Backend (C#) benötigt.
 * [cite_start]**Python:** Version 3.11 (oder höher, kompatibel) 
     * Wird für das KI-Backend benötigt.
@@ -35,7 +35,7 @@ Folgen Sie den Anweisungen, um die benötigte Software zu installieren.
     ```bash
     dotnet --version
     ```
-    Es sollte die installierte Version (z.B. `8.0.408`) angezeigt werden. 
+    [cite_start]Es sollte die installierte Version (z.B. `8.0.408`) angezeigt werden. 
 
 #### 2.2 Installation von Python
 
@@ -86,7 +86,7 @@ Die drei Teile des Projekts (Frontend, C# Backend, Python KI-Backend) müssen je
 2.  Wechseln Sie in das Verzeichnis des C# Backends:
     ```bash
     cd [PROJEKTWURZEL]\WILMA_Backend\WILMABackend
-    # Oder je nach genauer Ordnerstruktur, z.B. cd [PROJEKTWURZEL]\Bachend
+    # Gemäß deiner Ordnerstruktur könnte dies auch z.B. cd [PROJEKTWURZEL]\Bachend sein
     ```
 3.  Installieren Sie die Projekt-Abhängigkeiten. Dieser Befehl lädt alle im Projekt definierten Pakete herunter:
     ```bash
@@ -105,8 +105,8 @@ Die drei Teile des Projekts (Frontend, C# Backend, Python KI-Backend) müssen je
 1.  [cite_start]Öffnen Sie ein **zweites, neues Terminal-Fenster**. 
 2.  Wechseln Sie in das Verzeichnis des KI-Backends:
     ```bash
-    cd [PROJEKTWURZEL]\WILMA_Backend\backend-ki
-    # Oder je nach genauer Ordnerstruktur, z.B. cd [PROJEKTWURZEL]\KI_backend
+    cd [PROJEKTWURZEL]\WaterflowForecast
+    # Dieser Pfad ist korrekt gemäß deiner Ordnerstruktur-Bilder (image_034a72.png, image_034a52.png)
     ```
 3.  **Empfehlung: Virtuelle Umgebung erstellen und aktivieren:**
     * Erstellen Sie eine virtuelle Umgebung (nur einmalig notwendig):
@@ -145,7 +145,7 @@ Die drei Teile des Projekts (Frontend, C# Backend, Python KI-Backend) müssen je
 2.  Wechseln Sie in das Verzeichnis des Frontends:
     ```bash
     cd [PROJEKTWURZEL]\react-water-dashboard
-    # Oder je nach genauer Ordnerstruktur, z.B. cd [PROJEKTWURZEL]\Frontend
+    # Dies ist der Name des React-Projekts laut deiner package.json und sollte der Hauptordner des Frontends sein
     ```
 3.  Installieren Sie die notwendigen Node.js-Pakete (dieser Befehl lädt alle in `package.json` definierten Abhängigkeiten herunter und kann einige Minuten dauern):
     ```bash
