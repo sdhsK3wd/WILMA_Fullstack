@@ -1,4 +1,5 @@
-# === FRONTEND ===
+# === FRONTEND (React) ===
+# Node.js dependencies, build output, and local IDE/env files - KEEP IGNORED
 /DPA/node_modules/
 /DPA/dist/
 /DPA/build/
@@ -6,15 +7,19 @@
 /DPA/.idea/
 /DPA/.vscode/
 
-# === BACKEND (.NET / Visual Studio / Rider) ===
+# === C# BACKEND (.NET) ===
+# Compiled binaries, intermediate objects, and local IDE files - KEEP IGNORED
 /WILMA_Backend/bin/
 /WILMA_Backend/obj/
 /WILMA_Backend/.vs/
 /WILMA_Backend/.idea/
-/WILMA_Backend/*.db
-/WILMA_Backend/appsettings.json
+# Die C# Backend SQLite DB (WilmaDB.db) wird bei Bedarf neu generiert, wenn nicht vorhanden.
+# Wenn sie hier mit erfasst wird, ist das in Ordnung, da sie nicht riesig ist.
+# Soll sie ignoriert werden, müsste man hier spezifischer werden, aber da forecast.db auch erfasst werden muss,
+# ist es einfacher, alle .db zuzulassen, die nicht in anderen spezifischen Ignorierungen auftauchen.
 
-# === BACKEND (FastAPI / Python / KI) ===
+# === PYTHON KI-BACKEND (FastAPI) ===
+# Python virtual environment, bytecode, and generated outputs - KEEP IGNORED
 /WILMA_Fullstack/WaterflowForecast/venv/
 /WILMA_Fullstack/WaterflowForecast/__pycache__/
 /WILMA_Fullstack/WaterflowForecast/*.pyc
@@ -23,12 +28,9 @@
 /WILMA_Fullstack/WaterflowForecast/temp_*
 /WILMA_Fullstack/WaterflowForecast/results/
 /WILMA_Fullstack/WaterflowForecast/uploads/
-/WILMA_Fullstack/WaterflowForecast/*.csv
-*.db
-*.csv
-/WaterflowForecast/venv/
 
-# === TEMP & SYSTEM ===
+# === GENERAL / ROOT LEVEL & DYNAMIC FILES ===
+# Allgemeine Logs und temporäre Systemdateien - KEEP IGNORED
 *.log
 *.tmp
 *.DS_Store
@@ -36,20 +38,37 @@
 *.suo
 *.swp
 
-# === DATABASE ===
+# SQLite runtime files (dynamisch generiert) - KEEP IGNORED
 *.db-shm
 *.db-wal
 
-# === BILDER und DATEIEN NICHT TRACKEN ===
-*.png
-*.jpg
-*.jpeg
-*.gif
-*.webp
+# === DATEIEN, DIE IM REPO SEIN MÜSSEN (NICHT MEHR IGNORIERT) ===
 
-# === PROFILE-BILDER-ORDNER (optional) ===
-/public/profile_images/
+# Konfigurationsdateien:
+# appsettings.json ist essentiell für das C# Backend und MUSS im Repo sein.
+!/WILMA_Backend/appsettings.json
+# Kommentar: Die vorherige Zeile "/WILMA_Backend/appsettings.json" wurde aus den Ignorierungen entfernt.
+
+# Datenbankdateien:
+# forecast.db ist eine vorbereitete DB, die ins Repo muss. *.db wurde entfernt, um dies zu ermöglichen.
+# Wenn andere .db-Dateien in anderen Ordnern (außerhalb der ignorierten Ordner) ignoriert werden sollen,
+# müsste man sie hier spezifisch wieder hinzufügen.
+# Kommentar: Die vorherige Zeile "*.db" wurde aus den Ignorierungen entfernt.
+
+# Daten-CSVs:
+# Initiales CSV-Trainingsmaterial (z.B. in data/synthetic/) muss im Repo sein.
+# Kommentar: Die vorherigen Zeilen "*.csv" und "/WILMA_Fullstack/WaterflowForecast/*.csv" wurden aus den Ignorierungen entfernt.
+
+# Statische Bilddateien (Logos, Flaggen etc.):
+# Diese müssen im Repository sein, da sie zur Anwendung gehören.
+# Kommentar: Die vorherigen Zeilen "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp" wurden aus den Ignorierungen entfernt.
+
+# === SPEZIFISCHE LOKALE UPLOAD-ORDNER ===
+# Ordner für hochgeladene Profilbilder (vom C# Backend genutzt) - KEEP IGNORED
+# Dieser Ordner wird dynamisch erstellt und enthält Benutzer-Uploads, sollte daher NICHT im Repo sein.
+/WILMA_Backend/wwwroot/profile-images/
 
 # === OPTIONAL: Sonstiges ===
+# Temporäre Backup-Dateien
 *.bak
 *.old
