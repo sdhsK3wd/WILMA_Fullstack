@@ -14,17 +14,22 @@
 /WILMA_Backend/.vs/
 /WILMA_Backend/.idea/
 # Die C# Backend SQLite DB (WilmaDB.db) wird bei Bedarf neu generiert.
-# Sie wird hier nicht explizit ignoriert, damit auch forecast.db mit erfasst wird (durch die allgemeine Nicht-Ignorierung von *.db).
+# Sie wird hier NICHT explizit ignoriert, damit auch die KI-Datenbank (forecast.db)
+# mit erfasst wird, da wir keine allgemeine *.db Ignorierung haben.
 
 # === PYTHON KI-BACKEND (FastAPI) ===
-# Python virtual environment, bytecode, and generated outputs - KEEP IGNORED
+# Python virtual environment (sehr groß!) - KEEP IGNORED
+# Dieses Verzeichnis MUSS ignoriert werden, um die "Files too large" Fehler zu vermeiden.
 /WILMA_Fullstack/WaterflowForecast/venv/
 /WILMA_Fullstack/WaterflowForecast/__pycache__/
 /WILMA_Fullstack/WaterflowForecast/*.pyc
 /WILMA_Fullstack/WaterflowForecast/*.pyo
 /WILMA_Fullstack/WaterflowForecast/*.pyd
-/WILMA_Fullstack/WaterflowForecast/temp_*
+
+# Generierte Ausgabedateien und Benutzer-Uploads - KEEP IGNORED
+# Der 'results' Ordner enthält dynamisch generierte Plots und Vergleichs-CSVs.
 /WILMA_Fullstack/WaterflowForecast/results/
+# Der 'uploads' Ordner enthält vom Benutzer hochgeladene Dateien.
 /WILMA_Fullstack/WaterflowForecast/uploads/
 
 # === GENERAL / ROOT LEVEL & DYNAMIC FILES ===
@@ -36,26 +41,18 @@
 *.suo
 *.swp
 
-# SQLite runtime files (dynamisch generiert) - KEEP IGNORED
+# SQLite runtime files (dynamisch generiert während des Betriebs) - KEEP IGNORED
 *.db-shm
 *.db-wal
 
 # === DATEIEN, DIE IM REPO SEIN MÜSSEN (NICHT MEHR IGNORIERT) ===
+# Wenn hier kein Eintrag für eine Datei ist, wird Git sie standardmäßig verfolgen,
+# solange sie nicht in einem der ignorierten Ordner liegt.
 
-# appsettings.json ist essentiell für das C# Backend und MUSS im Repo sein.
-# Sie wird hier NICHT ignoriert.
-
-# Datenbankdateien:
-# forecast.db ist eine vorbereitete DB, die ins Repo muss. Allgemeine *.db wurde entfernt, um dies zu ermöglichen.
-# Sie wird hier NICHT ignoriert.
-
-# Daten-CSVs:
-# Initiales CSV-Trainingsmaterial (z.B. in data/synthetic/) muss im Repo sein.
-# Allgemeine *.csv wurde entfernt, um dies zu ermöglichen.
-
-# Statische Bilddateien (Logos, Flaggen etc.):
-# Diese müssen im Repository sein, da sie zur Anwendung gehören.
-# Allgemeine *.png, *.jpg etc. wurden entfernt, um dies zu ermöglichen.
+# appsettings.json: Essentiell für das C# Backend. Ist jetzt NICHT ignoriert.
+# forecast.db: Die initial befüllte KI-Datenbank. Ist jetzt NICHT ignoriert.
+# *.csv in 'data/synthetic/': Die initialen Daten-CSVs. Sind jetzt NICHT ignoriert (da *.csv entfernt).
+# *.png, *.jpg etc.: Statische Bild-Assets (Logo, Flaggen). Sind jetzt NICHT ignoriert.
 
 # === SPEZIFISCHE LOKALE UPLOAD-ORDNER ===
 # Ordner für hochgeladene Profilbilder (vom C# Backend genutzt) - KEEP IGNORED
