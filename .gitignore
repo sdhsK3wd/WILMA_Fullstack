@@ -13,10 +13,8 @@
 /WILMA_Backend/obj/
 /WILMA_Backend/.vs/
 /WILMA_Backend/.idea/
-# Die C# Backend SQLite DB (WilmaDB.db) wird bei Bedarf neu generiert, wenn nicht vorhanden.
-# Wenn sie hier mit erfasst wird, ist das in Ordnung, da sie nicht riesig ist.
-# Soll sie ignoriert werden, müsste man hier spezifischer werden, aber da forecast.db auch erfasst werden muss,
-# ist es einfacher, alle .db zuzulassen, die nicht in anderen spezifischen Ignorierungen auftauchen.
+# Die C# Backend SQLite DB (WilmaDB.db) wird bei Bedarf neu generiert.
+# Sie wird hier nicht explizit ignoriert, damit auch forecast.db mit erfasst wird (durch die allgemeine Nicht-Ignorierung von *.db).
 
 # === PYTHON KI-BACKEND (FastAPI) ===
 # Python virtual environment, bytecode, and generated outputs - KEEP IGNORED
@@ -44,24 +42,20 @@
 
 # === DATEIEN, DIE IM REPO SEIN MÜSSEN (NICHT MEHR IGNORIERT) ===
 
-# Konfigurationsdateien:
 # appsettings.json ist essentiell für das C# Backend und MUSS im Repo sein.
-!/WILMA_Backend/appsettings.json
-# Kommentar: Die vorherige Zeile "/WILMA_Backend/appsettings.json" wurde aus den Ignorierungen entfernt.
+# Sie wird hier NICHT ignoriert.
 
 # Datenbankdateien:
-# forecast.db ist eine vorbereitete DB, die ins Repo muss. *.db wurde entfernt, um dies zu ermöglichen.
-# Wenn andere .db-Dateien in anderen Ordnern (außerhalb der ignorierten Ordner) ignoriert werden sollen,
-# müsste man sie hier spezifisch wieder hinzufügen.
-# Kommentar: Die vorherige Zeile "*.db" wurde aus den Ignorierungen entfernt.
+# forecast.db ist eine vorbereitete DB, die ins Repo muss. Allgemeine *.db wurde entfernt, um dies zu ermöglichen.
+# Sie wird hier NICHT ignoriert.
 
 # Daten-CSVs:
 # Initiales CSV-Trainingsmaterial (z.B. in data/synthetic/) muss im Repo sein.
-# Kommentar: Die vorherigen Zeilen "*.csv" und "/WILMA_Fullstack/WaterflowForecast/*.csv" wurden aus den Ignorierungen entfernt.
+# Allgemeine *.csv wurde entfernt, um dies zu ermöglichen.
 
 # Statische Bilddateien (Logos, Flaggen etc.):
 # Diese müssen im Repository sein, da sie zur Anwendung gehören.
-# Kommentar: Die vorherigen Zeilen "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp" wurden aus den Ignorierungen entfernt.
+# Allgemeine *.png, *.jpg etc. wurden entfernt, um dies zu ermöglichen.
 
 # === SPEZIFISCHE LOKALE UPLOAD-ORDNER ===
 # Ordner für hochgeladene Profilbilder (vom C# Backend genutzt) - KEEP IGNORED
