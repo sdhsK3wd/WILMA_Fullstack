@@ -28,6 +28,7 @@
 
 # Generierte Ausgabedateien und Benutzer-Uploads - KEEP IGNORED
 # Der 'results' Ordner enthält dynamisch generierte Plots und Vergleichs-CSVs.
+# Er MUSS ignoriert werden.
 /WILMA_Fullstack/WaterflowForecast/results/
 # Der 'uploads' Ordner enthält vom Benutzer hochgeladene Dateien.
 /WILMA_Fullstack/WaterflowForecast/uploads/
