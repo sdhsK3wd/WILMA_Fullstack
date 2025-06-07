@@ -1,4 +1,4 @@
-// src/api/coreApi.ts (oder authApi.ts)
+// src/api/coreApi.ts (oder axiosInstance.ts)
 // Ihr existierender Code aus axiosInstance.ts, der auf Port 5070 zeigt
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import toast from 'react-hot-toast';
@@ -43,10 +43,14 @@ coreInstance.interceptors.response.use(
                 if (!user?.refreshToken) {
                     throw new Error("No refresh token found.");
                 }
+
                 // Anpassen an Ihren Auth-Endpunkt und Payload
-                const refreshEndpoint = '/api/Auth/refresh'; // Beispiel!
-                const refreshPayload = { refreshToken: user.refreshToken };
-                const refreshResponse = await axios.post(`${coreInstance.defaults.baseURL}${refreshEndpoint}`, refreshPayload); // Verwende die ursprüngliche baseURL
+                // Korrigiert: Endpunkt ist /api/users/refresh-token
+                const refreshEndpoint = '/api/users/refresh-token';
+                // Korrigiert: Payload-Key muss 'Token' sein, wie vom C# Backend erwartet
+                const refreshPayload = { Token: user.refreshToken };
+
+                const refreshResponse = await axios.post(`${coreInstance.defaults.baseURL}${refreshEndpoint}`, refreshPayload);
                 const newAccessToken = refreshResponse.data.token;
                 const newRefreshToken = refreshResponse.data.refreshToken;
 
@@ -59,7 +63,7 @@ coreInstance.interceptors.response.use(
                 return coreInstance(originalRequest);
             } catch (refreshError: any) {
                 console.error("❌ Token Refresh failed (coreApi):", refreshError?.response?.data || refreshError?.message || refreshError);
-                toast.error("Session expired.");
+                toast.error("Session expired."); // Der Text kann auch übersetzt werden, falls gewünscht
                 localStorage.removeItem("user");
                 setTimeout(() => { window.location.href = "/login"; }, 1500);
                 return Promise.reject(refreshError);
@@ -69,7 +73,7 @@ coreInstance.interceptors.response.use(
             console.error(`Axios Response Error (coreApi): Status ${error.response.status}`, error.response.data);
         } else if (error.request) {
             console.error('Axios Request Error (coreApi): No response received', error.request);
-            toast.error('Network error or server unreachable.');
+            toast.error('Network error or server unreachable.'); // Auch dieser Text kann übersetzt werden
         } else {
             console.error('Axios Setup Error (coreApi):', error.message);
         }

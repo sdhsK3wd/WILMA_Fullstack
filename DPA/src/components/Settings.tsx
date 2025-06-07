@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme as useMuiTheme } from '@mui/material/styles';
-// Korrigiert: useLocation entfernt, da nicht direkt in Settings.tsx genutzt
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useAppTheme } from '../context/ThemeContext';
-import { useTranslation } from 'react-i18next'; // useTranslation importieren
-import type { User } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 import {
     Box, AppBar, Toolbar, Typography, CssBaseline, ListSubheader,
@@ -17,30 +15,28 @@ import {
 } from '@mui/material';
 
 import {
-    Home as HomeIcon, // Wahrscheinlich nicht direkt hier genutzt
-    AccountCircle as ProfileIcon, // Wahrscheinlich nicht direkt hier genutzt
+    Home as HomeIcon,
+    AccountCircle as ProfileIcon,
     Settings as SettingsIcon,
     Brightness4 as DarkModeIcon,
     Brightness7 as LightModeIcon,
     Language as LanguageIcon,
-    VpnKeyOutlined, // <-- Hier korrigiert: Importname ist VpnKeyOutlined
+    VpnKeyOutlined,
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import ProfileNavbar from './ProfileNavbar'; // Die gemeinsame Navbar importieren
+import ProfileNavbar from './ProfileNavbar';
 
 const flagDePath = '/src/assets/de.svg';
 const flagEnPath = '/src/assets/en.svg';
-
-// Die interne ProfileNavbar wurde entfernt und in ProfileNavbar.tsx ausgelagert
 
 const Settings: React.FC = () => {
     const { user } = useAuth();
     const theme = useMuiTheme();
     const navigate = useNavigate();
     const { mode, toggleColorMode } = useAppTheme();
-    const { t, i18n } = useTranslation(); // t und i18n Funktion holen
-    const currentLanguage = i18n.language.split('-')[0]; // Get 'en' or 'de'
+    const { t, i18n } = useTranslation();
+    const currentLanguage = i18n.language.split('-')[0];
 
     const [isLoadingSettings, setIsLoadingSettings] = useState<boolean>(true);
 
@@ -48,7 +44,6 @@ const Settings: React.FC = () => {
         setIsLoadingSettings(true);
         if (user === undefined) return;
         if (user === null) {
-            // Hier könnte man auch einen Toast hinzufügen, falls nötig
             navigate('/login', { replace: true });
             setIsLoadingSettings(false);
             return;
@@ -60,10 +55,9 @@ const Settings: React.FC = () => {
 
     }, [user, navigate]);
 
-    // Sprache ändern
     const handleLanguageChange = (event: React.MouseEvent<HTMLElement>, newLanguage: 'de' | 'en' | null,) => {
         if (newLanguage !== null && newLanguage !== currentLanguage) {
-            i18n.changeLanguage(newLanguage); // Verwende i18n Funktion zum Ändern
+            i18n.changeLanguage(newLanguage);
         }
     };
 
@@ -84,7 +78,6 @@ const Settings: React.FC = () => {
     };
 
     if (user === undefined) {
-        // Hier könnte auch ein Ladeindikator mit übersetztem Text stehen
         return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', bgcolor: 'background.default' }}><CircularProgress /></Box>;
     }
 
@@ -94,12 +87,19 @@ const Settings: React.FC = () => {
                 <Paper elevation={0} variant="outlined" sx={{ p: {xs: 2, sm: 2.5}, borderRadius: 3, borderColor: alpha(theme.palette.divider, 0.5) }} >
                     <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} flexWrap="wrap">
                         <Box>
-                            {/* Übersetze Titel */}
                             <Typography id="theme-label" variant="h6" component="div" gutterBottom sx={{ fontWeight: 'medium' }}>{t('darkMode')}</Typography>
-                            {/* Übersetze Beschreibung */}
-                            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: '350px' }}> {t('themeDesc')} </Typography>
+                            {/* ANGEPASST: whiteSpace, overflow, textOverflow für einzeilige Anzeige */}
+                            <Typography variant="body2" color="text.secondary"
+                                        sx={{
+                                            maxWidth: '350px',
+                                            textAlign: 'left',
+                                            whiteSpace: 'nowrap', // Verhindert Zeilenumbruch
+                                            overflow: 'hidden',    // Schneidet Inhalt ab, der überläuft
+                                            textOverflow: 'ellipsis' // Fügt '...' hinzu, wenn Text abgeschnitten wird
+                                        }}>
+                                {t('themeDesc')}
+                            </Typography>
                         </Box>
-                        {/* Übersetze Tooltip */}
                         <Tooltip title={mode === 'dark' ? t("settings.themeTooltipLight") : t("settings.themeTooltipDark")} placement="left">
                             <IconButton onClick={toggleColorMode} color="primary" aria-label={mode === 'dark' ? t("settings.themeTooltipLight") : t("settings.themeTooltipDark")} sx={{ width: 42, height: 42 }} >
                                 <AnimatePresence mode="wait" initial={false}>
@@ -116,12 +116,19 @@ const Settings: React.FC = () => {
                 <Paper elevation={0} variant="outlined" sx={{ p: {xs: 2, sm: 2.5}, borderRadius: 3, borderColor: alpha(theme.palette.divider, 0.5) }} >
                     <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} flexWrap="wrap">
                         <Box sx={{ mb: {xs: 1.5, sm: 0 }}}>
-                            {/* Übersetze Titel */}
                             <Typography id="lang-label" variant="h6" component="div" gutterBottom sx={{ fontWeight: 'medium' }}>{t('language')}</Typography>
-                            {/* Übersetze Beschreibung */}
-                            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: '350px' }}> {t('langDesc')} </Typography>
+                            {/* ANGEPASST: whiteSpace, overflow, textOverflow für einzeilige Anzeige */}
+                            <Typography variant="body2" color="text.secondary"
+                                        sx={{
+                                            maxWidth: '350px',
+                                            textAlign: 'left',
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis'
+                                        }}>
+                                {t('langDesc')}
+                            </Typography>
                         </Box>
-                        {/* ToggleButtonGroup verwendet currentLanguage aus i18n State, das ist korrekt */}
                         <ToggleButtonGroup value={currentLanguage} exclusive onChange={handleLanguageChange} aria-labelledby="lang-label" size="medium" color="primary" >
                             <ToggleButton value="de" aria-label={t("settings.langButtonGerman")} sx={{ px: 2, py: 1, textTransform: 'none', lineHeight: 'normal' }}>
                                 <Avatar variant="rounded" alt={t("settings.langAltDe")} src={flagDePath} sx={{ width: 22, height: 16, mr: 1, borderRadius: '2px' }} /> DE
@@ -138,15 +145,22 @@ const Settings: React.FC = () => {
                 <Paper elevation={0} variant="outlined" sx={{ p: {xs: 2, sm: 2.5}, borderRadius: 3, borderColor: alpha(theme.palette.divider, 0.5) }} >
                     <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
                         <Box>
-                            {/* Übersetze Account Sektion - Hier wird das Icon verwendet */}
                             <Typography variant="h6" component="div" gutterBottom sx={{ fontWeight: 'medium' }}>
-                                {/* KORRIGIERT: Verwendung des korrekten Icon-Namens */}
                                 <VpnKeyOutlined fontSize="small" sx={{ verticalAlign: 'middle', mr: 1 }}/>
                                 {t('settings.account.title')}
                             </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: '350px' }}> {t('settings.account.description')} </Typography>
+                            {/* ANGEPASST: whiteSpace, overflow, textOverflow für einzeilige Anzeige */}
+                            <Typography variant="body2" color="text.secondary"
+                                        sx={{
+                                            maxWidth: '350px',
+                                            textAlign: 'left',
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis'
+                                        }}>
+                                {t('settings.account.description')}
+                            </Typography>
                         </Box>
-                        {/* Übersetze Button Text */}
                         <Button size="small" variant="text" component={RouterLink} to="/forgot-password">
                             {t('settings.account.button')}
                         </Button>
@@ -156,7 +170,6 @@ const Settings: React.FC = () => {
         </Stack>
     );
 
-    // Skelette müssen nicht übersetzt werden
     const renderSkeletons = () => (
         <Stack spacing={3}>
             {[1, 2].map(i => (
@@ -185,16 +198,14 @@ const Settings: React.FC = () => {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            {/* Die gemeinsame, übersetzte Navbar verwenden */}
             <ProfileNavbar />
 
             <Box component="main" sx={{ flexGrow: 1, bgcolor: theme.palette.mode === 'dark' ? theme.palette.grey[900] : theme.palette.background.default, minHeight: '100vh' }} >
                 <AppBar position="fixed" sx={{ width: '100%', zIndex: theme.zIndex.drawer + 1, bgcolor: alpha(theme.palette.background.paper, 0.8), backdropFilter: 'blur(8px)', color: theme.palette.text.primary, boxShadow: theme.shadows[1], borderBottom: `1px solid ${theme.palette.divider}` }} >
                     <Toolbar>
                         <SettingsIcon sx={{ mr: 1.5, color: 'primary.main' }} />
-                        {/* Übersetze AppBar Titel */}
                         <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-                            {t('settingsTitle')} {/* Annahme: AppBar Titel nutzt denselben Key wie die Seite */}
+                            {t('settingsTitle')}
                         </Typography>
                         {user && ( <Typography sx={{ mr: 2, display: { xs: 'none', sm: 'block' } }}> {user.username} ({user.role}) </Typography> )}
                         <Avatar src={user?.profileImageUrl || undefined} sx={{ bgcolor: theme.palette.primary.main }}> {user?.username?.charAt(0).toUpperCase()} </Avatar>
@@ -203,7 +214,6 @@ const Settings: React.FC = () => {
                 <Toolbar />
 
                 <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: '800px', mx: 'auto' }}>
-                    {/* Übersetze Seiten Titel */}
                     <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', mb: 4 }}>
                         {t('settings.pageTitle')}
                     </Typography>

@@ -22,14 +22,12 @@ import {
     Paper,
     Stack,
     CssBaseline,
-    // Avatar, // Nicht mehr benötigt, da Logo verwendet wird
     alpha,
-    // Divider // Nicht verwendet im Code
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { Visibility, VisibilityOff, Login as LoginIcon } from '@mui/icons-material';
 
-import logo from '../images/Logo.png'; // Importiere dein Logo
+import logo from '../images/WILMA.png'; // Importiere dein Logo
 
 const SignIn: React.FC = () => {
     const [email, setEmail] = useState("");
@@ -64,7 +62,14 @@ const SignIn: React.FC = () => {
         } catch (error) {
             const err = error as AxiosError<{ message?: string }>;
             console.error("Login Error:", err.response?.data || err.message);
-            toast.error(err.response?.data?.message || t("signIn.toast.loginErrorGeneric"));
+
+            // NEUE LOGIK HIER: Wenn Status 401 ist, gib spezifische Meldung aus
+            if (err.response && err.response.status === 401) {
+                toast.error(t("signIn.toast.invalidCredentials")); // Dies ist der neue spezifische Schlüssel
+            } else {
+                // Ansonsten die allgemeine Fehlermeldung vom Backend oder den Fallback
+                toast.error(err.response?.data?.message || t("signIn.toast.loginErrorGeneric"));
+            }
         } finally {
             setLoading(false);
         }
@@ -75,20 +80,16 @@ const SignIn: React.FC = () => {
         event.preventDefault();
     };
 
-    // Hilfsfunktion für Autofill-Styles, um Wiederholungen zu vermeiden
-    // Die Hintergrundfarbe hier ist der Standard für FilledInput in MUI
-    // theme.palette.mode === 'dark' ? alpha(theme.palette.common.white, 0.09) : alpha(theme.palette.common.black, 0.06)
-    // Passe dies an, falls deine FilledInputs eine andere benutzerdefinierte Hintergrundfarbe haben.
     const getAutofillStyles = (themeInstance: typeof theme) => ({
         WebkitBoxShadow: `0 0 0 100px ${
             themeInstance.palette.mode === 'dark'
-                ? alpha(themeInstance.palette.common.white, 0.09) // Standard MUI FilledInput Hintergrund (dunkel)
-                : alpha(themeInstance.palette.common.black, 0.06) // Standard MUI FilledInput Hintergrund (hell)
+                ? alpha(themeInstance.palette.common.white, 0.09)
+                : alpha(themeInstance.palette.common.black, 0.06)
         } inset !important`,
         WebkitTextFillColor: `${themeInstance.palette.text.primary} !important`,
         caretColor: `${themeInstance.palette.text.primary} !important`,
-        borderRadius: 'inherit !important', // Nimmt den Radius des Elternelements (des Inputs)
-        transition: 'background-color 5000s ease-in-out 0s', // Verhindert die Browser-Standard-Transition
+        borderRadius: 'inherit !important',
+        transition: 'background-color 5000s ease-in-out 0s',
     });
 
     const autofillStyles = getAutofillStyles(theme);
@@ -113,7 +114,7 @@ const SignIn: React.FC = () => {
                     p: { xs: 3, sm: 5 },
                     width: '100%',
                     maxWidth: '500px',
-                    borderRadius: 4, // Entspricht theme.shape.borderRadius * 1 bei Standardtheme (4px)
+                    borderRadius: 4,
                     borderColor: alpha(theme.palette.divider, 0.3),
                     bgcolor: theme.palette.mode === 'dark' ? alpha(theme.palette.background.paper, 0.75) : 'background.paper',
                     backdropFilter: theme.palette.mode === 'dark' ? 'blur(16px)' : 'none',
@@ -132,7 +133,12 @@ const SignIn: React.FC = () => {
                     <img
                         src={logo}
                         alt="GWT Logo"
-                        style={{ width: 140, height: 'auto', marginBottom: theme.spacing(1) }}
+                        style={{
+                            width: 140 * 1.2, // 20% größer (140 * 1.2 = 168)
+                            height: 'auto',
+                            marginBottom: '15px', // Fester Wert, du kannst ihn weiter reduzieren, z.B. '10px' oder '5px'
+                            marginTop: '0px' // Sicherstellen, dass kein zusätzlicher Abstand oben ist.
+                        }}
                     />
 
                     <Typography component="h1" variant="h5" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
@@ -161,8 +167,7 @@ const SignIn: React.FC = () => {
                                 InputLabelProps={{ required: false }}
                                 sx={{
                                     '.MuiFilledInput-root': {
-                                        borderRadius: 2, // Dein ursprünglicher Radius
-                                        // Wichtig: Styles für das eigentliche <input>-Element innerhalb von MuiFilledInput-root
+                                        borderRadius: 2,
                                         '& input:-webkit-autofill': autofillStyles,
                                         '& input:-webkit-autofill:hover': autofillStyles,
                                         '& input:-webkit-autofill:focus': autofillStyles,
@@ -177,8 +182,7 @@ const SignIn: React.FC = () => {
                                 disabled={loading}
                                 sx={{
                                     '.MuiFilledInput-root': {
-                                        borderRadius: 2, // Dein ursprünglicher Radius
-                                        // Wichtig: Styles für das eigentliche <input>-Element innerhalb von MuiFilledInput-root
+                                        borderRadius: 2,
                                         '& input:-webkit-autofill': autofillStyles,
                                         '& input:-webkit-autofill:hover': autofillStyles,
                                         '& input:-webkit-autofill:focus': autofillStyles,
