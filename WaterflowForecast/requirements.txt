@@ -44,7 +44,7 @@ optree==0.15.0
 packaging==25.0
 pandas==2.2.3
 patsy==1.0.1
-pillow==11.2.1
+pillow==11.3.0
 plotly==6.0.1
 prophet==1.1.6
 protobuf==5.29.4
